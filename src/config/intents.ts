@@ -20,6 +20,7 @@
 import type { ComponentType } from 'react';
 
 // <custom:intent-imports>
+import { IconInbox, IconListCheck, IconClipboardCheck, IconMessageQuestion, IconMessageCheck, IconGavel } from '@tabler/icons-react';
 // </custom:intent-imports>
 
 export interface IntentLink {
@@ -42,6 +43,12 @@ export interface IntentLink {
 
 export const INTENTS: IntentLink[] = [
   // <custom:intents>
+  { path: '/intents/anfrage-aufnehmen', label: { de: 'Anfrage aufnehmen', en: 'Record inquiry' }, icon: IconInbox, description: 'Neue Kundenanfrage als Vorgang anlegen, zuständige Person zuordnen und erste Quellen erfassen.' },
+  { path: '/intents/anforderung-erfassen', label: { de: 'Anforderung erfassen', en: 'Capture requirement' }, icon: IconListCheck, description: 'Anforderung mit Quelle erfassen, Lücken und Widersprüche markieren.' },
+  { path: '/intents/beurteilung-vorbereiten', label: { de: 'Beurteilung vorbereiten', en: 'Prepare assessment' }, icon: IconClipboardCheck, description: 'Fachliche Beurteilung zu einer Anforderung anlegen und der zuständigen Person zuordnen.' },
+  { path: '/intents/rueckfrage-stellen', label: { de: 'Rückfrage vorbereiten', en: 'Prepare follow-up question' }, icon: IconMessageQuestion, description: 'Rückfrage an zuständigen Beteiligten richten, mit Anforderung verbinden und bündeln.' },
+  { path: '/intents/antwort-erfassen', label: { de: 'Antwort erfassen', en: 'Record answer' }, icon: IconMessageCheck, description: 'Eingehende Antwort der Rückfrage zuordnen, Änderungen an Angaben festhalten und Anforderung aktualisieren.' },
+  { path: '/intents/entscheidung-treffen', label: { de: 'Entscheidung treffen', en: 'Make decision' }, icon: IconGavel, description: 'Entscheidung mit Regel, Beurteilung, Entscheider und Befugnisprüfung festhalten.' },
   // </custom:intents>
 ];
 
@@ -52,7 +59,7 @@ export const INTENTS: IntentLink[] = [
  * purpose — a scaffold update resets it to false (self-healing if Phase 2
  * never ran).
  */
-export const INTENTS_PENDING = true;
+export const INTENTS_PENDING = false;
 
 /**
  * When the Phase-1 bundle was deployed (ISO, set by the service together with
