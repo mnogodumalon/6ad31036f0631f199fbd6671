@@ -1,8 +1,8 @@
 /**
  * useEntscheidungTreffenFlow — the plumbing of the flow « Entscheidung treffen », generated from the plan.
  *
- * Writes `entscheidungen`: asks `vorgang`, `anforderung`, `beurteilung`, `regel`, `entscheider`, `befugnis_geprueft`, `gegenstand`, `unsicherheiten`, `ki_vorschlag`, `entscheidung`, `begruendung`, `folgen`, `freigabestatus`; sets `entscheidungsdatum` itself.
-Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), the form is prefilled with its values; ; sets `prozessschritt`, `status` itself.
+ * Writes `entscheidungen`: asks `regel`, `folgen`, `vorgang`, `gegenstand`, `anforderung`, `begruendung`, `beurteilung`, `entscheider`, `entscheidung`, `ki_vorschlag`, `freigabestatus`, `unsicherheiten`, `befugnis_geprueft`; sets `entscheidungsdatum` itself.
+Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), the form is prefilled with its values; ; sets `status`, `prozessschritt` itself.
  * The hook OWNS: the form(s) with exactly these fields and the plan's required
  * ingredients, one record search per picked field (columns and filter from
  * the plan), and the submit plan with its fixed and derived values. A page
@@ -17,24 +17,24 @@ Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), 
  *   messages  the sentence for an empty required field, per field
  *
  *   const flow = useEntscheidungTreffenFlow({
- *     steps: { vorgaenge: 1, vorgang: 2, anforderung: 3, beurteilung: 4, regel: 5, entscheider: 6, befugnis_geprueft: 7, gegenstand: 7, unsicherheiten: 7, ki_vorschlag: 7, entscheidung: 7, begruendung: 7, folgen: 7, freigabestatus: 7 },
- *     items: { vorgang: r => ({ id: r.id, title: fieldText(r, 'vorgangsnummer') }) },
+ *     steps: { vorgaenge: 1, regel: 2, vorgang: 3, anforderung: 4, beurteilung: 5, entscheider: 6, folgen: 7, gegenstand: 7, begruendung: 7, entscheidung: 7, ki_vorschlag: 7, freigabestatus: 7, unsicherheiten: 7, befugnis_geprueft: 7 },
+ *     items: { regel: r => ({ id: r.id, title: fieldText(r, 'bezeichnung') }) },
  *   });
  *   <IntentWizardShell forms={flow.forms} draftKey={flow.draftKey} …>
+ *     <EntitySelectStep {...flow.picks.regel.select} {...flow.pick('regel')} />
  *     <EntitySelectStep {...flow.picks.vorgang.select} {...flow.pick('vorgang')} />
  *     <EntitySelectStep {...flow.picks.anforderung.select} {...flow.pick('anforderung')} />
  *     <EntitySelectStep {...flow.picks.beurteilung.select} {...flow.pick('beurteilung')} />
- *     <EntitySelectStep {...flow.picks.regel.select} {...flow.pick('regel')} />
  *     <EntitySelectStep {...flow.picks.entscheider.select} {...flow.pick('entscheider')} />
  *     // the record this flow changes: <EntitySelectStep {...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')} />
- *     <Bound form={flow.forms.entscheidungen} name="befugnis_geprueft" />
- *     <Bound form={flow.forms.entscheidungen} name="gegenstand" />
- *     <Bound form={flow.forms.entscheidungen} name="unsicherheiten" />
- *     <Bound form={flow.forms.entscheidungen} name="ki_vorschlag" />
- *     <Bound form={flow.forms.entscheidungen} name="entscheidung" />
- *     <Bound form={flow.forms.entscheidungen} name="begruendung" />
  *     <Bound form={flow.forms.entscheidungen} name="folgen" />
+ *     <Bound form={flow.forms.entscheidungen} name="gegenstand" />
+ *     <Bound form={flow.forms.entscheidungen} name="begruendung" />
+ *     <Bound form={flow.forms.entscheidungen} name="entscheidung" />
+ *     <Bound form={flow.forms.entscheidungen} name="ki_vorschlag" />
  *     <Bound form={flow.forms.entscheidungen} name="freigabestatus" />
+ *     <Bound form={flow.forms.entscheidungen} name="unsicherheiten" />
+ *     <Bound form={flow.forms.entscheidungen} name="befugnis_geprueft" />
  *     <StepNav onNext={() => flow.validateStep(n)} />
  *     {!flow.submit.done && <SummaryStep forms={flow.formList} submit={flow.submit} />}
  *     {flow.submit.result && <SuccessStep result={flow.submit.result} forms={flow.formList} submit={flow.submit} />}
@@ -67,16 +67,16 @@ export interface EntscheidungTreffenFlowOptions {
   messages?: Partial<Record<Key, string>>;
   /** How a search hit reads — the card's title/subtitle/status per pick. */
   items?: {
+    regel?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     vorgang?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     anforderung?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     beurteilung?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
-    regel?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     entscheider?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     vorgaenge?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
   };
 }
 
-const DEFAULT_STEPS: Record<string, number> = {"anforderung": 3, "befugnis_geprueft": 7, "begruendung": 7, "beurteilung": 4, "entscheider": 6, "entscheidung": 7, "folgen": 7, "freigabestatus": 7, "gegenstand": 7, "ki_vorschlag": 7, "regel": 5, "unsicherheiten": 7, "vorgaenge": 1, "vorgang": 2};
+const DEFAULT_STEPS: Record<string, number> = {"anforderung": 4, "befugnis_geprueft": 7, "begruendung": 7, "beurteilung": 5, "entscheider": 6, "entscheidung": 7, "folgen": 7, "freigabestatus": 7, "gegenstand": 7, "ki_vorschlag": 7, "regel": 2, "unsicherheiten": 7, "vorgaenge": 1, "vorgang": 3};
 export const ENTSCHEIDUNGTREFFEN_REVIEW_STEP = 8;
 
 function fromPick<T>(pick: { recordOf(id: string): JourneyRecord | undefined }, form: StepForm, field: string, read: (r: JourneyRecord) => T): T | undefined {
@@ -109,10 +109,10 @@ export function useEntscheidungTreffenFlow(options: EntscheidungTreffenFlowOptio
   const steps = { ...DEFAULT_STEPS, ...(options.steps ?? {}) } as Record<string, number>;
   const [vorgaengeTargetId, setVorgaengeTargetId] = useState<string | null>(null);
   const entscheidungen = useStepForm('entscheidungen', {
-    fields: ["vorgang", "anforderung", "beurteilung", "regel", "entscheider", "befugnis_geprueft", "gegenstand", "unsicherheiten", "ki_vorschlag", "entscheidung", "begruendung", "folgen", "freigabestatus"],
-    steps: only(steps, ["vorgang", "anforderung", "beurteilung", "regel", "entscheider", "befugnis_geprueft", "gegenstand", "unsicherheiten", "ki_vorschlag", "entscheidung", "begruendung", "folgen", "freigabestatus"]) as Record<string, number>,
-    initial: only(options.initial as FormValues | undefined, ["vorgang", "anforderung", "beurteilung", "regel", "entscheider", "befugnis_geprueft", "gegenstand", "unsicherheiten", "ki_vorschlag", "entscheidung", "begruendung", "folgen", "freigabestatus"]),
-    messages: only(options.messages as Record<string, string> | undefined, ["vorgang", "anforderung", "beurteilung", "regel", "entscheider", "befugnis_geprueft", "gegenstand", "unsicherheiten", "ki_vorschlag", "entscheidung", "begruendung", "folgen", "freigabestatus"]),
+    fields: ["regel", "folgen", "vorgang", "gegenstand", "anforderung", "begruendung", "beurteilung", "entscheider", "entscheidung", "ki_vorschlag", "freigabestatus", "unsicherheiten", "befugnis_geprueft"],
+    steps: only(steps, ["regel", "folgen", "vorgang", "gegenstand", "anforderung", "begruendung", "beurteilung", "entscheider", "entscheidung", "ki_vorschlag", "freigabestatus", "unsicherheiten", "befugnis_geprueft"]) as Record<string, number>,
+    initial: only(options.initial as FormValues | undefined, ["regel", "folgen", "vorgang", "gegenstand", "anforderung", "begruendung", "beurteilung", "entscheider", "entscheidung", "ki_vorschlag", "freigabestatus", "unsicherheiten", "befugnis_geprueft"]),
+    messages: only(options.messages as Record<string, string> | undefined, ["regel", "folgen", "vorgang", "gegenstand", "anforderung", "begruendung", "beurteilung", "entscheider", "entscheidung", "ki_vorschlag", "freigabestatus", "unsicherheiten", "befugnis_geprueft"]),
   });
   const vorgaenge = useStepForm('vorgaenge', {
     fields: [],
@@ -128,6 +128,12 @@ export function useEntscheidungTreffenFlow(options: EntscheidungTreffenFlowOptio
   // render time, so a change works on the running application.
   usePolicyVersion();
   const searches = {
+    regel: useRecordSearch(servicePort, 'regelwerk', withPickPolicy('regel', {
+      searchFields: ["bezeichnung"] as never,
+      filter: "r.v_status == 'gueltig'",
+      where: (r: JourneyRecord) => (fieldLookup(r, "status")?.key ?? null) === "gueltig",
+      toItem: options.items?.regel as never,
+    })),
     vorgang: useRecordSearch(servicePort, 'vorgaenge', withPickPolicy('vorgang', {
       searchFields: ["vorgangsnummer"] as never,
       toItem: options.items?.vorgang as never,
@@ -139,12 +145,6 @@ export function useEntscheidungTreffenFlow(options: EntscheidungTreffenFlowOptio
     beurteilung: useRecordSearch(servicePort, 'beurteilungen', withPickPolicy('beurteilung', {
       searchFields: ["sachverhalt", "unsicherheiten"] as never,
       toItem: options.items?.beurteilung as never,
-    })),
-    regel: useRecordSearch(servicePort, 'regelwerk', withPickPolicy('regel', {
-      searchFields: ["bezeichnung"] as never,
-      filter: "r.v_status == 'gueltig'",
-      where: (r: JourneyRecord) => (fieldLookup(r, "status")?.key ?? null) === "gueltig",
-      toItem: options.items?.regel as never,
     })),
     entscheider: useRecordSearch(servicePort, 'beteiligte', withPickPolicy('entscheider', {
       searchFields: ["vorname", "nachname"] as never,
@@ -172,10 +172,10 @@ export function useEntscheidungTreffenFlow(options: EntscheidungTreffenFlowOptio
     href: `#/verwaltung/anwendung?line=intent:entscheidung-treffen:write:${entity}.${field}`,
   });
   const picks = {
+    regel: { ...searches.regel, select: { ...searches.regel.select, create: false as boolean, hint: hintFor('regel', 'regelwerk', {"conditions": [{"field": "status", "op": "eq", "value": "gueltig"}], "mode": "all"} as PickWhere | null) } },
     vorgang: { ...searches.vorgang, select: { ...searches.vorgang.select, create: false as boolean, hint: hintFor('vorgang', 'vorgaenge', null as PickWhere | null) } },
     anforderung: { ...searches.anforderung, select: { ...searches.anforderung.select, create: false as boolean, hint: hintFor('anforderung', 'anforderungen', null as PickWhere | null) } },
     beurteilung: { ...searches.beurteilung, select: { ...searches.beurteilung.select, create: false as boolean, hint: hintFor('beurteilung', 'beurteilungen', null as PickWhere | null) } },
-    regel: { ...searches.regel, select: { ...searches.regel.select, create: false as boolean, hint: hintFor('regel', 'regelwerk', {"conditions": [{"field": "status", "op": "eq", "value": "gueltig"}], "mode": "all"} as PickWhere | null) } },
     entscheider: { ...searches.entscheider, select: { ...searches.entscheider.select, create: false as boolean, hint: hintFor('entscheider', 'beteiligte', {"conditions": [{"field": "aktiv", "op": "eq", "value": "true"}, {"field": "entscheidungsbefugnis", "op": "ne", "value": "keine"}], "mode": "all"} as PickWhere | null) } },
     vorgaenge: { ...searches.vorgaenge, select: { ...searches.vorgaenge.select, create: false as boolean, hint: hintFor('vorgaenge', 'vorgaenge', null as PickWhere | null) } },
   };
@@ -195,12 +195,12 @@ export function useEntscheidungTreffenFlow(options: EntscheidungTreffenFlowOptio
         ? { key: 'target:vorgaenge', label: entityLabel('vorgaenge'), value: picks.vorgaenge.labelOf(vorgaengeTargetId) ?? vorgaengeTargetId, step: steps.vorgaenge }
         : undefined,
       values: (): FormValues => ({
-        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "entscheidungen_treffen",
         status: policyFixedValue('vorgaenge', 'status') ?? "entscheidungsreif",
+        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "entscheidungen_treffen",
       }),
 
       // the review shows what this step sets itself — changeable on „Deine Anwendung“, not here
-      settings: () => [setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "entscheidungen_treffen"), setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "entscheidungsreif")],
+      settings: () => [setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "entscheidungsreif"), setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "entscheidungen_treffen")],
     },
   ];
 

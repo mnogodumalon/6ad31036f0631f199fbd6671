@@ -52,35 +52,35 @@ There is NO `@/config/appIds`, no `@/config/lookupOptions` and no
 createRecordUrl from the service. Note the lowercase `l` in the service path.
 
 - Beteiligte (beteiligte): email^[string/email] "E-Mail", telefon^[string/tel], stelle![lookup/select: vertrieb|konstruktion|arbeitsvorbereitung|qualitaetssicherung|kunde|sonstige] "Rolle oder Stelle", zustaendigkeitsbereich[string/textarea], entscheidungsbefugnis[lookup/select: keine|fachliche_beurteilung|technische_freigabe|kaufmaennische_freigabe|gesamtfreigabe], vorname!^[string/text], nachname!^[string/text], organisation^[string/text], aktiv[bool]
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ stelle → choice (6 options, ChoiceGroup) · entscheidungsbefugnis → choice (5 options, ChoiceGroup)
   ⚙ getBeteiligte() · getBeteiligteEntry(id) · createBeteiligteEntry(fields) · updateBeteiligteEntry(id, fields) · deleteBeteiligteEntry(id) · queryBeteiligte({ filter, orderby, limit, offset, fields }) · countBeteiligte(filter?)
 - Regelwerk (regelwerk): bezeichnung!^[string/text] "Regelbezeichnung", beschreibung!^[string/textarea] "Beschreibung der Regel", geltungsbereich^[string/text], regeltyp!^[lookup/radio: geschaeftsregel|pruefregel|freigaberegel], erforderliche_befugnis^[lookup/select: fachliche_beurteilung|technische_freigabe|kaufmaennische_freigabe|gesamtfreigabe] "Erforderliche Entscheidungsbefugnis", verbindlich[bool], gueltig_ab[date/date], status[lookup/radio: entwurf|gueltig|ausser_kraft]
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ regeltyp → choice (3 options, ChoiceGroup) · erforderliche_befugnis → choice (4 options, ChoiceGroup) · status → choice (3 options, ChoiceGroup)
   ⚙ getRegelwerk() · getRegelwerkEntry(id) · createRegelwerkEntry(fields) · updateRegelwerkEntry(id, fields) · deleteRegelwerkEntry(id) · queryRegelwerk({ filter, orderby, limit, offset, fields }) · countRegelwerk(filter?)
 - Vorgänge (vorgaenge): vorgangsnummer!^[string/text], titel!^[string/text], kunde^[string/text], eingangsdatum^[date/date], kundenanfrage^[string/textarea] "Kundenanfrage im Wortlaut", zustaendige_person[applookup/select], prozessschritt[lookup/select: auftragsentwurf_pruefen|abgeschlossen|anfrage_verstehen|informationen_pruefen|beurteilungen_vorbereiten|beteiligte_einbeziehen|kommunikation_organisieren|entscheidungen_treffen] "Aktueller Prozessschritt", status[lookup/radio: neu|in_klaerung|wartet_auf_antwort|entscheidungsreif|abgeschlossen], freigabestatus[lookup/radio: nicht_freigegeben|teilweise_freigegeben|freigegeben|abgelehnt], auftragsentwurf[string/textarea], geklaerte_punkte[string/textarea], offene_punkte[string/textarea], uebergabefaehig[bool] "Bereit zur Übergabe an den nächsten Arbeitsschritt"
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ status → choice (5 options, ChoiceGroup) · freigabestatus → choice (4 options, ChoiceGroup) · zustaendige_person → record (beteiligte, EntitySelectStep)
   ⚙ getVorgaenge() · getVorgaengeEntry(id) · createVorgaengeEntry(fields) · updateVorgaengeEntry(id, fields) · deleteVorgaengeEntry(id) · queryVorgaenge({ filter, orderby, limit, offset, fields }) · countVorgaenge(filter?)
   ✚ EnrichedVorgaenge adds ONLY zustaendige_personName — via enrichVorgaenge(vorgaenge, { beteiligteMap }), all maps required
   → zustaendige_person links to app_id 6ad30ffea403206740fda712
 - Quellen (quellen): vorgang!^[applookup/select], bezeichnung!^[string/text], quellenart^[lookup/select: kundendokument|email=E-Mail|zeichnung|stueckliste|erp_system|cad_system|informelles_hilfsmittel|sonstiges], fundort^[string/url] "Fundort oder Link", version^[string/text], verlaesslichkeit[lookup/radio: hoch|mittel|gering|unbekannt], datei[file], bemerkung[string/textarea]
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   · fundort: An URL value according to RFC 3986 (or `null`/`None`).
   ◈ verlaesslichkeit → choice (4 options, ChoiceGroup) · vorgang → record (vorgaenge, EntitySelectStep)
   ⚙ getQuellen() · getQuellenEntry(id) · createQuellenEntry(fields) · updateQuellenEntry(id, fields) · deleteQuellenEntry(id) · queryQuellen({ filter, orderby, limit, offset, fields }) · countQuellen(filter?)
   ✚ EnrichedQuellen adds ONLY vorgangName — via enrichQuellen(quellen, { vorgaengeMap }), all maps required
   → vorgang links to app_id 6ad310075e4813c154ebf710
 - Erfahrungen (erfahrungen): vorgang^[applookup/select], titel!^[string/text], beschreibung!^[string/textarea], erfahrungsart!^[lookup/select: informelles_hilfsmittel|bewaehrte_routine|informationsluecke|widerspruch|typische_rueckfrage|fehler|nacharbeit|verzoegerung|umgang_erfahrungen=Umgang mit früheren Erfahrungen|arbeitsablauf=Tatsächlicher Arbeitsablauf], erkenntnisklasse!^[lookup/radio: beobachtete_tatsache|ungepruefte_annahme|fachlich_bestaetigt=Fachlich bestätigte Erkenntnis|verbindliche_regel|situationsabhaengige_entscheidung], bestaetigt_von[applookup/select] "Bestätigt durch", wiederverwendbar[bool] "Für spätere Aufträge wiederverwendbar", verbesserungsvorschlag[string/textarea]
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ erkenntnisklasse → choice (5 options, ChoiceGroup) · vorgang → record (vorgaenge, EntitySelectStep) · bestaetigt_von → record (beteiligte, EntitySelectStep)
   ⚙ getErfahrungen() · getErfahrungenEntry(id) · createErfahrungenEntry(fields) · updateErfahrungenEntry(id, fields) · deleteErfahrungenEntry(id) · queryErfahrungen({ filter, orderby, limit, offset, fields }) · countErfahrungen(filter?)
   ✚ EnrichedErfahrungen adds ONLY vorgangName, bestaetigt_vonName — via enrichErfahrungen(erfahrungen, { vorgaengeMap, beteiligteMap }), all maps required
   → vorgang links to app_id 6ad310075e4813c154ebf710
   → bestaetigt_von links to app_id 6ad30ffea403206740fda712
 - Anforderungen (anforderungen): widerspruch_zu[applookup/select] "Widerspruch zu Anforderung", vorgang!^[applookup/select], bezeichnung!^[string/text], beschreibung^[string/textarea], kategorie^[lookup/select: werkstoff|geometrie_masse=Geometrie und Maße|toleranzen|oberflaeche|menge_termin=Menge und Termin|qualitaet_pruefung=Qualität und Prüfung|kaufmaennisches|sonstiges], wert^[string/text] "Wert oder Angabe", quelle[applookup/select], erfassungsstatus![lookup/radio: vollstaendig|fehlt|widerspruechlich|ungeprueft], art_der_angabe[lookup/radio: beobachtete_tatsache|ungepruefte_annahme|fachlich_bestaetigt], hinweis_luecke[string/textarea] "Hinweis zur Lücke oder zum Widerspruch"
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ erfassungsstatus → choice (4 options, ChoiceGroup) · art_der_angabe → choice (3 options, ChoiceGroup) · widerspruch_zu → record (anforderungen, EntitySelectStep) · vorgang → record (vorgaenge, EntitySelectStep) · quelle → record (quellen, EntitySelectStep)
   ⚙ getAnforderungen() · getAnforderungenEntry(id) · createAnforderungenEntry(fields) · updateAnforderungenEntry(id, fields) · deleteAnforderungenEntry(id) · queryAnforderungen({ filter, orderby, limit, offset, fields }) · countAnforderungen(filter?)
   ✚ EnrichedAnforderungen adds ONLY widerspruch_zuName, vorgangName, quelleName — via enrichAnforderungen(anforderungen, { anforderungenMap, vorgaengeMap, quellenMap }), all maps required
@@ -88,7 +88,7 @@ createRecordUrl from the service. Note the lowercase `l` in the service path.
   → vorgang links to app_id 6ad310075e4813c154ebf710
   → quelle links to app_id 6ad31009bd8c8a29f033b8b9
 - Beurteilungen (beurteilungen): vorgang!^[applookup/select], beurteiler^[applookup/select] "Beurteilende Person", fachgebiet^[lookup/select: qualitaetssicherung|sonstiges|vertrieb|konstruktion|arbeitsvorbereitung], sachverhalt!^[string/textarea], bewertung[string/textarea], moegliche_erklaerung[string/textarea] "Mögliche Erklärung (Vorschlag)", unsicherheiten[string/textarea] "Bestehende Unsicherheiten", fachlich_bestaetigt[bool], beurteilt_am[date/date] "Datum der Beurteilung", anforderung^[applookup/select]
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ fachgebiet → choice (5 options, ChoiceGroup) · vorgang → record (vorgaenge, EntitySelectStep) · beurteiler → record (beteiligte, EntitySelectStep) · anforderung → record (anforderungen, EntitySelectStep)
   ⚙ getBeurteilungen() · getBeurteilungenEntry(id) · createBeurteilungenEntry(fields) · updateBeurteilungenEntry(id, fields) · deleteBeurteilungenEntry(id) · queryBeurteilungen({ filter, orderby, limit, offset, fields }) · countBeurteilungen(filter?)
   ✚ EnrichedBeurteilungen adds ONLY vorgangName, beurteilerName, anforderungName — via enrichBeurteilungen(beurteilungen, { vorgaengeMap, beteiligteMap, anforderungenMap }), all maps required
@@ -96,7 +96,7 @@ createRecordUrl from the service. Note the lowercase `l` in the service path.
   → beurteiler links to app_id 6ad30ffea403206740fda712
   → anforderung links to app_id 6ad3100a83f2147ed4c1684f
 - Rückfragen (rueckfragen): vorgang!^[applookup/select], adressat!^[applookup/select], fragetext!^[string/textarea], buendelungsgruppe^[string/text], status[lookup/radio: vorbereitet|gestellt|beantwortet|erledigt], gestellt_am[date/date], antwort[string/textarea], antwort_am[date/date] "Antwort erhalten am", aenderung_angabe[string/textarea] "Änderung an bereits erfassten Angaben", anforderung^[applookup/select] "Betroffene Anforderung"
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ status → choice (4 options, ChoiceGroup) · vorgang → record (vorgaenge, EntitySelectStep) · adressat → record (beteiligte, EntitySelectStep) · anforderung → record (anforderungen, EntitySelectStep)
   ⚙ getRueckfragen() · getRueckfragenEntry(id) · createRueckfragenEntry(fields) · updateRueckfragenEntry(id, fields) · deleteRueckfragenEntry(id) · queryRueckfragen({ filter, orderby, limit, offset, fields }) · countRueckfragen(filter?)
   ✚ EnrichedRueckfragen adds ONLY vorgangName, adressatName, anforderungName — via enrichRueckfragen(rueckfragen, { vorgaengeMap, beteiligteMap, anforderungenMap }), all maps required
@@ -104,7 +104,7 @@ createRecordUrl from the service. Note the lowercase `l` in the service path.
   → adressat links to app_id 6ad30ffea403206740fda712
   → anforderung links to app_id 6ad3100a83f2147ed4c1684f
 - Entscheidungen (entscheidungen): vorgang!^[applookup/select], gegenstand!^[string/text] "Entscheidungsgegenstand", regel^[applookup/select] "Anwendbare Regel", entscheider[applookup/select] "Entscheidende Person", befugnis_geprueft[bool] "Entscheidungsbefugnis geprüft", unsicherheiten[string/textarea] "Verbleibende Unsicherheiten", ki_vorschlag[string/textarea] "Vorschlag zur Entscheidung (unverbindlich)", entscheidung[string/textarea] "Getroffene Entscheidung", begruendung[string/textarea], folgen[string/textarea] "Folgen der Entscheidung", entscheidungsdatum[date/date], freigabestatus[lookup/radio: offen|freigegeben|abgelehnt|unter_vorbehalt], anforderung^[applookup/select] "Zugrunde liegende Anforderung", beurteilung^[applookup/select] "Fachliche Beurteilung"
-  ≡ 3 records at build time
+  ≡ 8 records at build time
   ◈ freigabestatus → choice (4 options, ChoiceGroup) · vorgang → record (vorgaenge, EntitySelectStep) · regel → record (regelwerk, EntitySelectStep) · entscheider → record (beteiligte, EntitySelectStep) · anforderung → record (anforderungen, EntitySelectStep) · beurteilung → record (beurteilungen, EntitySelectStep)
   ⚙ getEntscheidungen() · getEntscheidungenEntry(id) · createEntscheidungenEntry(fields) · updateEntscheidungenEntry(id, fields) · deleteEntscheidungenEntry(id) · queryEntscheidungen({ filter, orderby, limit, offset, fields }) · countEntscheidungen(filter?)
   ✚ EnrichedEntscheidungen adds ONLY vorgangName, regelName, entscheiderName, anforderungName, beurteilungName — via enrichEntscheidungen(entscheidungen, { vorgaengeMap, regelwerkMap, beteiligteMap, anforderungenMap, beurteilungenMap }), all maps required

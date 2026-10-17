@@ -21,12 +21,12 @@ export const SYSTEM_ASSIGNED: Record<string, string[]> = {
 export const PLAN_SENTENCES: Record<string, string[]> = {
   "anfrage-aufnehmen": [
     "Legt an: quellen, vorgaenge",
-    "Automatisch: eingangsdatum (heutiges Datum, automatisch), status (fester Wert „neu“), prozessschritt (fester Wert „anfrage_verstehen“), freigabestatus (fester Wert „nicht_freigegeben“)"
+    "Automatisch: status (fester Wert „neu“), eingangsdatum (heutiges Datum, automatisch), freigabestatus (fester Wert „nicht_freigegeben“), prozessschritt (fester Wert „anfrage_verstehen“)"
   ],
   "anforderung-erfassen": [
     "Legt an: anforderungen",
     "Ändert: vorgaenge",
-    "Automatisch: prozessschritt (fester Wert „informationen_pruefen“), status (fester Wert „in_klaerung“)"
+    "Automatisch: status (fester Wert „in_klaerung“), prozessschritt (fester Wert „informationen_pruefen“)"
   ],
   "beurteilung-vorbereiten": [
     "Legt an: beurteilungen",
@@ -36,16 +36,16 @@ export const PLAN_SENTENCES: Record<string, string[]> = {
   "rueckfrage-stellen": [
     "Legt an: rueckfragen",
     "Ändert: vorgaenge",
-    "Automatisch: status (fester Wert „vorbereitet“), prozessschritt (fester Wert „kommunikation_organisieren“), status (fester Wert „wartet_auf_antwort“)"
+    "Automatisch: status (fester Wert „vorbereitet“), status (fester Wert „wartet_auf_antwort“), prozessschritt (fester Wert „kommunikation_organisieren“)"
   ],
   "antwort-erfassen": [
     "Ändert: anforderungen, rueckfragen, vorgaenge",
-    "Automatisch: antwort_am (heutiges Datum, automatisch), status (fester Wert „beantwortet“), status (fester Wert „in_klaerung“)"
+    "Automatisch: status (fester Wert „beantwortet“), antwort_am (heutiges Datum, automatisch), status (fester Wert „in_klaerung“)"
   ],
   "entscheidung-treffen": [
     "Legt an: entscheidungen",
     "Ändert: vorgaenge",
-    "Automatisch: entscheidungsdatum (heutiges Datum, automatisch), prozessschritt (fester Wert „entscheidungen_treffen“), status (fester Wert „entscheidungsreif“)"
+    "Automatisch: entscheidungsdatum (heutiges Datum, automatisch), status (fester Wert „entscheidungsreif“), prozessschritt (fester Wert „entscheidungen_treffen“)"
   ]
 };
 

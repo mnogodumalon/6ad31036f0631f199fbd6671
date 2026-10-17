@@ -365,7 +365,7 @@ export function QuellenDialog({ open, onClose, onSubmit, defaultValues, recordId
         <Label htmlFor="vorgang">{fieldLabel('quellen', 'vorgang')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Combobox
           id="vorgang"
-          placeholder="Welcher Vorgang?"
+          placeholder=""
           items={vorgaengeListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorgangsnummer ?? r.record_id),
@@ -385,7 +385,7 @@ export function QuellenDialog({ open, onClose, onSubmit, defaultValues, recordId
         <Label htmlFor="bezeichnung">{fieldLabel('quellen', 'bezeichnung')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Input
           id="bezeichnung"
-          placeholder="z. B. Kundenzeichnung Rev. B"
+          placeholder=""
           value={fields.bezeichnung ?? ''}
           onChange={e => setFields(f => ({ ...f, bezeichnung: e.target.value }))}
           required
@@ -402,7 +402,7 @@ export function QuellenDialog({ open, onClose, onSubmit, defaultValues, recordId
           value={lookupKey(fields.quellenart) ?? ''}
           onValueChange={v => setFields(f => ({ ...f, quellenart: v === 'none' ? undefined : v as any }))}
         >
-          <SelectTrigger id="quellenart" className="max-sm:h-11"><SelectValue placeholder="z. B. E-Mail, Zeichnung" /></SelectTrigger>
+          <SelectTrigger id="quellenart" className="max-sm:h-11"><SelectValue placeholder="" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="none">—</SelectItem>
             <SelectItem value="kundendokument">{lookupLabel('quellen', 'quellenart', 'kundendokument') ?? 'Kundendokument'}</SelectItem>
@@ -424,7 +424,7 @@ export function QuellenDialog({ open, onClose, onSubmit, defaultValues, recordId
           id="fundort"
           type="url"
           inputMode="url"
-          placeholder="z. B. https://server/doku.pdf"
+          placeholder=""
           value={fields.fundort ?? ''}
           onChange={e => setFields(f => ({ ...f, fundort: e.target.value }))}
         />
@@ -435,7 +435,7 @@ export function QuellenDialog({ open, onClose, onSubmit, defaultValues, recordId
         <Label htmlFor="version">{fieldLabel('quellen', 'version')}</Label>
         <Input
           id="version"
-          placeholder="z. B. 1.2"
+          placeholder=""
           value={fields.version ?? ''}
           onChange={e => setFields(f => ({ ...f, version: e.target.value }))}
         />
@@ -575,7 +575,7 @@ export function QuellenDialog({ open, onClose, onSubmit, defaultValues, recordId
         <Label htmlFor="bemerkung">{fieldLabel('quellen', 'bemerkung')}</Label>
         <Textarea
           id="bemerkung"
-          placeholder="Was ist wichtig zur Quelle?"
+          placeholder=""
           value={fields.bemerkung ?? ''}
           onChange={e => setFields(f => ({ ...f, bemerkung: e.target.value }))}
           rows={3}

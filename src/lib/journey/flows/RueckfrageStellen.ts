@@ -1,8 +1,8 @@
 /**
  * useRueckfrageStellenFlow — the plumbing of the flow « Rückfrage vorbereiten », generated from the plan.
  *
- * Writes `rueckfragen`: asks `vorgang`, `anforderung`, `adressat`, `fragetext`, `buendelungsgruppe`; sets `status` itself.
-Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), the form is prefilled with its values; ; sets `prozessschritt`, `status` itself.
+ * Writes `rueckfragen`: asks `vorgang`, `adressat`, `fragetext`, `anforderung`, `buendelungsgruppe`; sets `status` itself.
+Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), the form is prefilled with its values; ; sets `status`, `prozessschritt` itself.
  * The hook OWNS: the form(s) with exactly these fields and the plan's required
  * ingredients, one record search per picked field (columns and filter from
  * the plan), and the submit plan with its fixed and derived values. A page
@@ -17,13 +17,13 @@ Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), 
  *   messages  the sentence for an empty required field, per field
  *
  *   const flow = useRueckfrageStellenFlow({
- *     steps: { vorgaenge: 1, vorgang: 2, anforderung: 3, adressat: 4, fragetext: 5, buendelungsgruppe: 5 },
+ *     steps: { vorgaenge: 1, vorgang: 2, adressat: 3, anforderung: 4, fragetext: 5, buendelungsgruppe: 5 },
  *     items: { vorgang: r => ({ id: r.id, title: fieldText(r, 'vorgangsnummer') }) },
  *   });
  *   <IntentWizardShell forms={flow.forms} draftKey={flow.draftKey} …>
  *     <EntitySelectStep {...flow.picks.vorgang.select} {...flow.pick('vorgang')} />
- *     <EntitySelectStep {...flow.picks.anforderung.select} {...flow.pick('anforderung')} />
  *     <EntitySelectStep {...flow.picks.adressat.select} {...flow.pick('adressat')} />
+ *     <EntitySelectStep {...flow.picks.anforderung.select} {...flow.pick('anforderung')} />
  *     // the record this flow changes: <EntitySelectStep {...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')} />
  *     <Bound form={flow.forms.rueckfragen} name="fragetext" />
  *     <Bound form={flow.forms.rueckfragen} name="buendelungsgruppe" />
@@ -60,13 +60,13 @@ export interface RueckfrageStellenFlowOptions {
   /** How a search hit reads — the card's title/subtitle/status per pick. */
   items?: {
     vorgang?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
-    anforderung?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     adressat?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
+    anforderung?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     vorgaenge?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
   };
 }
 
-const DEFAULT_STEPS: Record<string, number> = {"adressat": 4, "anforderung": 3, "buendelungsgruppe": 5, "fragetext": 5, "vorgaenge": 1, "vorgang": 2};
+const DEFAULT_STEPS: Record<string, number> = {"adressat": 3, "anforderung": 4, "buendelungsgruppe": 5, "fragetext": 5, "vorgaenge": 1, "vorgang": 2};
 export const RUECKFRAGESTELLEN_REVIEW_STEP = 6;
 
 function fromPick<T>(pick: { recordOf(id: string): JourneyRecord | undefined }, form: StepForm, field: string, read: (r: JourneyRecord) => T): T | undefined {
@@ -99,10 +99,10 @@ export function useRueckfrageStellenFlow(options: RueckfrageStellenFlowOptions =
   const steps = { ...DEFAULT_STEPS, ...(options.steps ?? {}) } as Record<string, number>;
   const [vorgaengeTargetId, setVorgaengeTargetId] = useState<string | null>(null);
   const rueckfragen = useStepForm('rueckfragen', {
-    fields: ["vorgang", "anforderung", "adressat", "fragetext", "buendelungsgruppe"],
-    steps: only(steps, ["vorgang", "anforderung", "adressat", "fragetext", "buendelungsgruppe"]) as Record<string, number>,
-    initial: only(options.initial as FormValues | undefined, ["vorgang", "anforderung", "adressat", "fragetext", "buendelungsgruppe"]),
-    messages: only(options.messages as Record<string, string> | undefined, ["vorgang", "anforderung", "adressat", "fragetext", "buendelungsgruppe"]),
+    fields: ["vorgang", "adressat", "fragetext", "anforderung", "buendelungsgruppe"],
+    steps: only(steps, ["vorgang", "adressat", "fragetext", "anforderung", "buendelungsgruppe"]) as Record<string, number>,
+    initial: only(options.initial as FormValues | undefined, ["vorgang", "adressat", "fragetext", "anforderung", "buendelungsgruppe"]),
+    messages: only(options.messages as Record<string, string> | undefined, ["vorgang", "adressat", "fragetext", "anforderung", "buendelungsgruppe"]),
   });
   const vorgaenge = useStepForm('vorgaenge', {
     fields: [],
@@ -122,17 +122,17 @@ export function useRueckfrageStellenFlow(options: RueckfrageStellenFlowOptions =
       searchFields: ["vorgangsnummer"] as never,
       toItem: options.items?.vorgang as never,
     })),
-    anforderung: useRecordSearch(servicePort, 'anforderungen', withPickPolicy('anforderung', {
-      searchFields: ["bezeichnung", "hinweis_luecke"] as never,
-      filter: "r.v_erfassungsstatus == 'fehlt' or r.v_erfassungsstatus == 'widerspruechlich' or r.v_erfassungsstatus == 'ungeprueft'",
-      where: (r: JourneyRecord) => (fieldLookup(r, "erfassungsstatus")?.key ?? null) === "fehlt" || (fieldLookup(r, "erfassungsstatus")?.key ?? null) === "widerspruechlich" || (fieldLookup(r, "erfassungsstatus")?.key ?? null) === "ungeprueft",
-      toItem: options.items?.anforderung as never,
-    })),
     adressat: useRecordSearch(servicePort, 'beteiligte', withPickPolicy('adressat', {
       searchFields: ["vorname", "nachname", "zustaendigkeitsbereich"] as never,
       filter: "r.v_aktiv == True",
       where: (r: JourneyRecord) => r.fields["aktiv"] === true,
       toItem: options.items?.adressat as never,
+    })),
+    anforderung: useRecordSearch(servicePort, 'anforderungen', withPickPolicy('anforderung', {
+      searchFields: ["bezeichnung", "hinweis_luecke"] as never,
+      filter: "r.v_erfassungsstatus == 'fehlt' or r.v_erfassungsstatus == 'widerspruechlich' or r.v_erfassungsstatus == 'ungeprueft'",
+      where: (r: JourneyRecord) => (fieldLookup(r, "erfassungsstatus")?.key ?? null) === "fehlt" || (fieldLookup(r, "erfassungsstatus")?.key ?? null) === "widerspruechlich" || (fieldLookup(r, "erfassungsstatus")?.key ?? null) === "ungeprueft",
+      toItem: options.items?.anforderung as never,
     })),
     vorgaenge: useRecordSearch(servicePort, 'vorgaenge', withPickPolicy('vorgaenge', {
       searchFields: ["vorgangsnummer"] as never,
@@ -155,8 +155,8 @@ export function useRueckfrageStellenFlow(options: RueckfrageStellenFlowOptions =
   });
   const picks = {
     vorgang: { ...searches.vorgang, select: { ...searches.vorgang.select, create: false as boolean, hint: hintFor('vorgang', 'vorgaenge', null as PickWhere | null) } },
-    anforderung: { ...searches.anforderung, select: { ...searches.anforderung.select, create: false as boolean, hint: hintFor('anforderung', 'anforderungen', {"conditions": [{"field": "erfassungsstatus", "op": "eq", "value": "fehlt"}, {"field": "erfassungsstatus", "op": "eq", "value": "widerspruechlich"}, {"field": "erfassungsstatus", "op": "eq", "value": "ungeprueft"}], "mode": "any"} as PickWhere | null) } },
     adressat: { ...searches.adressat, select: { ...searches.adressat.select, create: false as boolean, hint: hintFor('adressat', 'beteiligte', {"conditions": [{"field": "aktiv", "op": "eq", "value": "true"}], "mode": "all"} as PickWhere | null) } },
+    anforderung: { ...searches.anforderung, select: { ...searches.anforderung.select, create: false as boolean, hint: hintFor('anforderung', 'anforderungen', {"conditions": [{"field": "erfassungsstatus", "op": "eq", "value": "fehlt"}, {"field": "erfassungsstatus", "op": "eq", "value": "widerspruechlich"}, {"field": "erfassungsstatus", "op": "eq", "value": "ungeprueft"}], "mode": "any"} as PickWhere | null) } },
     vorgaenge: { ...searches.vorgaenge, select: { ...searches.vorgaenge.select, create: false as boolean, hint: hintFor('vorgaenge', 'vorgaenge', null as PickWhere | null) } },
   };
 
@@ -178,12 +178,12 @@ export function useRueckfrageStellenFlow(options: RueckfrageStellenFlowOptions =
         ? { key: 'target:vorgaenge', label: entityLabel('vorgaenge'), value: picks.vorgaenge.labelOf(vorgaengeTargetId) ?? vorgaengeTargetId, step: steps.vorgaenge }
         : undefined,
       values: (): FormValues => ({
-        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "kommunikation_organisieren",
         status: policyFixedValue('vorgaenge', 'status') ?? "wartet_auf_antwort",
+        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "kommunikation_organisieren",
       }),
 
       // the review shows what this step sets itself — changeable on „Deine Anwendung“, not here
-      settings: () => [setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "kommunikation_organisieren"), setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "wartet_auf_antwort")],
+      settings: () => [setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "wartet_auf_antwort"), setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "kommunikation_organisieren")],
     },
   ];
 

@@ -395,7 +395,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="widerspruch_zu">{fieldLabel('anforderungen', 'widerspruch_zu')}</Label>
         <Combobox
           id="widerspruch_zu"
-          placeholder="Welche Anforderung widerspricht?"
+          placeholder=""
           items={anforderungenList.map(r => ({
             id: r.record_id,
             label: String(r.fields.bezeichnung ?? r.record_id),
@@ -410,7 +410,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="vorgang">{fieldLabel('anforderungen', 'vorgang')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Combobox
           id="vorgang"
-          placeholder="Welcher Vorgang?"
+          placeholder=""
           items={vorgaengeListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorgangsnummer ?? r.record_id),
@@ -430,7 +430,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="bezeichnung">{fieldLabel('anforderungen', 'bezeichnung')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Input
           id="bezeichnung"
-          placeholder="z. B. Werkstoff 1.4301"
+          placeholder=""
           value={fields.bezeichnung ?? ''}
           onChange={e => setFields(f => ({ ...f, bezeichnung: e.target.value }))}
           required
@@ -445,7 +445,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="beschreibung">{fieldLabel('anforderungen', 'beschreibung')}</Label>
         <Textarea
           id="beschreibung"
-          placeholder="Was genau wird gefordert?"
+          placeholder=""
           value={fields.beschreibung ?? ''}
           onChange={e => setFields(f => ({ ...f, beschreibung: e.target.value }))}
           rows={3}
@@ -459,7 +459,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
           value={lookupKey(fields.kategorie) ?? ''}
           onValueChange={v => setFields(f => ({ ...f, kategorie: v === 'none' ? undefined : v as any }))}
         >
-          <SelectTrigger id="kategorie" className="max-sm:h-11"><SelectValue placeholder="z. B. Werkstoff, Toleranzen" /></SelectTrigger>
+          <SelectTrigger id="kategorie" className="max-sm:h-11"><SelectValue placeholder="" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="none">—</SelectItem>
             <SelectItem value="werkstoff">{lookupLabel('anforderungen', 'kategorie', 'werkstoff') ?? 'Werkstoff'}</SelectItem>
@@ -479,7 +479,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="wert">{fieldLabel('anforderungen', 'wert')}</Label>
         <Input
           id="wert"
-          placeholder="z. B. 12 mm ±0,1"
+          placeholder=""
           value={fields.wert ?? ''}
           onChange={e => setFields(f => ({ ...f, wert: e.target.value }))}
         />
@@ -490,7 +490,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="quelle">{fieldLabel('anforderungen', 'quelle')}</Label>
         <Combobox
           id="quelle"
-          placeholder="Woher stammt die Angabe?"
+          placeholder=""
           items={quellenListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.bezeichnung ?? r.record_id),
@@ -615,7 +615,7 @@ export function AnforderungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="hinweis_luecke">{fieldLabel('anforderungen', 'hinweis_luecke')}</Label>
         <Textarea
           id="hinweis_luecke"
-          placeholder="Was fehlt oder widerspricht sich?"
+          placeholder=""
           value={fields.hinweis_luecke ?? ''}
           onChange={e => setFields(f => ({ ...f, hinweis_luecke: e.target.value }))}
           rows={3}

@@ -316,7 +316,7 @@ export function RegelwerkDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="bezeichnung">{fieldLabel('regelwerk', 'bezeichnung')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Input
           id="bezeichnung"
-          placeholder="z. B. Rabattfreigabe ab 10 %"
+          placeholder=""
           value={fields.bezeichnung ?? ''}
           onChange={e => setFields(f => ({ ...f, bezeichnung: e.target.value }))}
           required
@@ -331,7 +331,7 @@ export function RegelwerkDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="beschreibung">{fieldLabel('regelwerk', 'beschreibung')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Textarea
           id="beschreibung"
-          placeholder="Was genau regelt die Regel?"
+          placeholder=""
           value={fields.beschreibung ?? ''}
           onChange={e => setFields(f => ({ ...f, beschreibung: e.target.value }))}
           rows={3}
@@ -346,7 +346,7 @@ export function RegelwerkDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="geltungsbereich">{fieldLabel('regelwerk', 'geltungsbereich')}</Label>
         <Input
           id="geltungsbereich"
-          placeholder="z. B. Alle Angebote"
+          placeholder=""
           value={fields.geltungsbereich ?? ''}
           onChange={e => setFields(f => ({ ...f, geltungsbereich: e.target.value }))}
         />
@@ -478,7 +478,7 @@ export function RegelwerkDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="gueltig_ab">{fieldLabel('regelwerk', 'gueltig_ab')}</Label>
         <DatePicker
           id="gueltig_ab"
-          placeholder="Ab wann gilt die Regel?"
+          placeholder=""
           mode="date"
           value={fields.gueltig_ab ?? null}
           onChange={v => setFields(f => ({ ...f, gueltig_ab: v ?? undefined }))}

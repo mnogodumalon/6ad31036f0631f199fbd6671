@@ -462,7 +462,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="vorgang">{fieldLabel('entscheidungen', 'vorgang')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Combobox
           id="vorgang"
-          placeholder="Welcher Vorgang?"
+          placeholder=""
           items={vorgaengeListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorgangsnummer ?? r.record_id),
@@ -482,7 +482,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="gegenstand">{fieldLabel('entscheidungen', 'gegenstand')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Input
           id="gegenstand"
-          placeholder="z. B. Angebot für Rahmenvertrag"
+          placeholder=""
           value={fields.gegenstand ?? ''}
           onChange={e => setFields(f => ({ ...f, gegenstand: e.target.value }))}
           required
@@ -497,7 +497,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="regel">{fieldLabel('entscheidungen', 'regel')}</Label>
         <Combobox
           id="regel"
-          placeholder="Welche Regel gilt?"
+          placeholder=""
           items={regelwerkListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.bezeichnung ?? r.record_id),
@@ -514,7 +514,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="entscheider">{fieldLabel('entscheidungen', 'entscheider')}</Label>
         <Combobox
           id="entscheider"
-          placeholder="Wer entscheidet?"
+          placeholder=""
           items={beteiligteListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorname ?? r.record_id),
@@ -544,7 +544,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="unsicherheiten">{fieldLabel('entscheidungen', 'unsicherheiten')}</Label>
         <Textarea
           id="unsicherheiten"
-          placeholder="Was ist noch unklar?"
+          placeholder=""
           value={fields.unsicherheiten ?? ''}
           onChange={e => setFields(f => ({ ...f, unsicherheiten: e.target.value }))}
           rows={3}
@@ -556,7 +556,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="ki_vorschlag">{fieldLabel('entscheidungen', 'ki_vorschlag')}</Label>
         <Textarea
           id="ki_vorschlag"
-          placeholder="Unverbindlicher Vorschlag"
+          placeholder=""
           value={fields.ki_vorschlag ?? ''}
           onChange={e => setFields(f => ({ ...f, ki_vorschlag: e.target.value }))}
           rows={3}
@@ -568,7 +568,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="entscheidung">{fieldLabel('entscheidungen', 'entscheidung')}</Label>
         <Textarea
           id="entscheidung"
-          placeholder="Was wurde entschieden?"
+          placeholder=""
           value={fields.entscheidung ?? ''}
           onChange={e => setFields(f => ({ ...f, entscheidung: e.target.value }))}
           rows={3}
@@ -580,7 +580,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="begruendung">{fieldLabel('entscheidungen', 'begruendung')}</Label>
         <Textarea
           id="begruendung"
-          placeholder="Warum so entschieden?"
+          placeholder=""
           value={fields.begruendung ?? ''}
           onChange={e => setFields(f => ({ ...f, begruendung: e.target.value }))}
           rows={3}
@@ -592,7 +592,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="folgen">{fieldLabel('entscheidungen', 'folgen')}</Label>
         <Textarea
           id="folgen"
-          placeholder="Welche Folgen hat es?"
+          placeholder=""
           value={fields.folgen ?? ''}
           onChange={e => setFields(f => ({ ...f, folgen: e.target.value }))}
           rows={3}
@@ -604,7 +604,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="entscheidungsdatum">{fieldLabel('entscheidungen', 'entscheidungsdatum')}</Label>
         <DatePicker
           id="entscheidungsdatum"
-          placeholder="Wann wurde entschieden?"
+          placeholder=""
           mode="date"
           value={fields.entscheidungsdatum ?? null}
           onChange={v => setFields(f => ({ ...f, entscheidungsdatum: v ?? undefined }))}
@@ -675,7 +675,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="anforderung">{fieldLabel('entscheidungen', 'anforderung')}</Label>
         <Combobox
           id="anforderung"
-          placeholder="Welche Anforderung?"
+          placeholder=""
           items={anforderungenListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.bezeichnung ?? r.record_id),
@@ -692,7 +692,7 @@ export function EntscheidungenDialog({ open, onClose, onSubmit, defaultValues, r
         <Label htmlFor="beurteilung">{fieldLabel('entscheidungen', 'beurteilung')}</Label>
         <Combobox
           id="beurteilung"
-          placeholder="Welche Beurteilung?"
+          placeholder=""
           items={beurteilungenListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.sachverhalt ?? r.record_id),

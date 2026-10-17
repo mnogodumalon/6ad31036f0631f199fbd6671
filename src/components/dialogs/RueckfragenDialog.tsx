@@ -406,7 +406,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="vorgang">{fieldLabel('rueckfragen', 'vorgang')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Combobox
           id="vorgang"
-          placeholder="Welcher Vorgang?"
+          placeholder=""
           items={vorgaengeListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorgangsnummer ?? r.record_id),
@@ -426,7 +426,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="adressat">{fieldLabel('rueckfragen', 'adressat')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Combobox
           id="adressat"
-          placeholder="Wer soll antworten?"
+          placeholder=""
           items={beteiligteListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorname ?? r.record_id),
@@ -446,7 +446,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="fragetext">{fieldLabel('rueckfragen', 'fragetext')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Textarea
           id="fragetext"
-          placeholder="Was möchten Sie wissen?"
+          placeholder=""
           value={fields.fragetext ?? ''}
           onChange={e => setFields(f => ({ ...f, fragetext: e.target.value }))}
           rows={3}
@@ -461,7 +461,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="buendelungsgruppe">{fieldLabel('rueckfragen', 'buendelungsgruppe')}</Label>
         <Input
           id="buendelungsgruppe"
-          placeholder="z. B. BG-2026-01"
+          placeholder=""
           value={fields.buendelungsgruppe ?? ''}
           onChange={e => setFields(f => ({ ...f, buendelungsgruppe: e.target.value }))}
         />
@@ -531,7 +531,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="gestellt_am">{fieldLabel('rueckfragen', 'gestellt_am')}</Label>
         <DatePicker
           id="gestellt_am"
-          placeholder="Wann wurde gefragt?"
+          placeholder=""
           mode="date"
           value={fields.gestellt_am ?? null}
           onChange={v => setFields(f => ({ ...f, gestellt_am: v ?? undefined }))}
@@ -543,7 +543,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="antwort">{fieldLabel('rueckfragen', 'antwort')}</Label>
         <Textarea
           id="antwort"
-          placeholder="Was wurde geantwortet?"
+          placeholder=""
           value={fields.antwort ?? ''}
           onChange={e => setFields(f => ({ ...f, antwort: e.target.value }))}
           rows={3}
@@ -555,7 +555,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="antwort_am">{fieldLabel('rueckfragen', 'antwort_am')}</Label>
         <DatePicker
           id="antwort_am"
-          placeholder="Wann kam die Antwort?"
+          placeholder=""
           mode="date"
           value={fields.antwort_am ?? null}
           onChange={v => setFields(f => ({ ...f, antwort_am: v ?? undefined }))}
@@ -567,7 +567,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="aenderung_angabe">{fieldLabel('rueckfragen', 'aenderung_angabe')}</Label>
         <Textarea
           id="aenderung_angabe"
-          placeholder="Was ändert sich?"
+          placeholder=""
           value={fields.aenderung_angabe ?? ''}
           onChange={e => setFields(f => ({ ...f, aenderung_angabe: e.target.value }))}
           rows={3}
@@ -579,7 +579,7 @@ export function RueckfragenDialog({ open, onClose, onSubmit, defaultValues, reco
         <Label htmlFor="anforderung">{fieldLabel('rueckfragen', 'anforderung')}</Label>
         <Combobox
           id="anforderung"
-          placeholder="Welche Anforderung?"
+          placeholder=""
           items={anforderungenListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.bezeichnung ?? r.record_id),

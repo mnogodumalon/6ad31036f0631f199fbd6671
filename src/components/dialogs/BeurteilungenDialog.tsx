@@ -406,7 +406,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="vorgang">{fieldLabel('beurteilungen', 'vorgang')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Combobox
           id="vorgang"
-          placeholder="Welcher Vorgang?"
+          placeholder=""
           items={vorgaengeListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorgangsnummer ?? r.record_id),
@@ -426,7 +426,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="beurteiler">{fieldLabel('beurteilungen', 'beurteiler')}</Label>
         <Combobox
           id="beurteiler"
-          placeholder="Wer beurteilt?"
+          placeholder=""
           items={beteiligteListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorname ?? r.record_id),
@@ -515,7 +515,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="sachverhalt">{fieldLabel('beurteilungen', 'sachverhalt')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Textarea
           id="sachverhalt"
-          placeholder="Was ist passiert?"
+          placeholder=""
           value={fields.sachverhalt ?? ''}
           onChange={e => setFields(f => ({ ...f, sachverhalt: e.target.value }))}
           rows={3}
@@ -530,7 +530,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="bewertung">{fieldLabel('beurteilungen', 'bewertung')}</Label>
         <Textarea
           id="bewertung"
-          placeholder="Wie lautet die Einschätzung?"
+          placeholder=""
           value={fields.bewertung ?? ''}
           onChange={e => setFields(f => ({ ...f, bewertung: e.target.value }))}
           rows={3}
@@ -542,7 +542,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="moegliche_erklaerung">{fieldLabel('beurteilungen', 'moegliche_erklaerung')}</Label>
         <Textarea
           id="moegliche_erklaerung"
-          placeholder="Was könnte die Ursache sein?"
+          placeholder=""
           value={fields.moegliche_erklaerung ?? ''}
           onChange={e => setFields(f => ({ ...f, moegliche_erklaerung: e.target.value }))}
           rows={3}
@@ -554,7 +554,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="unsicherheiten">{fieldLabel('beurteilungen', 'unsicherheiten')}</Label>
         <Textarea
           id="unsicherheiten"
-          placeholder="Was ist noch unklar?"
+          placeholder=""
           value={fields.unsicherheiten ?? ''}
           onChange={e => setFields(f => ({ ...f, unsicherheiten: e.target.value }))}
           rows={3}
@@ -579,7 +579,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="beurteilt_am">{fieldLabel('beurteilungen', 'beurteilt_am')}</Label>
         <DatePicker
           id="beurteilt_am"
-          placeholder="Wann wurde beurteilt?"
+          placeholder=""
           mode="date"
           value={fields.beurteilt_am ?? null}
           onChange={v => setFields(f => ({ ...f, beurteilt_am: v ?? undefined }))}
@@ -591,7 +591,7 @@ export function BeurteilungenDialog({ open, onClose, onSubmit, defaultValues, re
         <Label htmlFor="anforderung">{fieldLabel('beurteilungen', 'anforderung')}</Label>
         <Combobox
           id="anforderung"
-          placeholder="Welche Anforderung?"
+          placeholder=""
           items={anforderungenListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.bezeichnung ?? r.record_id),

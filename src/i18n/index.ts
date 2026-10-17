@@ -1971,14 +1971,14 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
           "prozessschritt": "Current Process Step",
           "status": "Status",
           "freigabestatus": "Approval Status",
-          "auftragsentwurf": "Draft Order",
+          "auftragsentwurf": "Order Draft",
           "geklaerte_punkte": "Clarified Points",
           "offene_punkte": "Open Points",
           "uebergabefaehig": "Ready for Handover to Next Work Step"
         },
         "lookups": {
           "prozessschritt": {
-            "auftragsentwurf_pruefen": "Review Draft Order",
+            "auftragsentwurf_pruefen": "Review Order Draft",
             "abgeschlossen": "Completed",
             "anfrage_verstehen": "Understand Inquiry",
             "informationen_pruefen": "Check Information",
@@ -2023,7 +2023,7 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
             "stueckliste": "Bill of Materials",
             "erp_system": "ERP System",
             "cad_system": "CAD System",
-            "informelles_hilfsmittel": "Informal Tool",
+            "informelles_hilfsmittel": "Informal Aid",
             "sonstiges": "Other"
           },
           "verlaesslichkeit": {
@@ -2049,11 +2049,11 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
         },
         "lookups": {
           "erfahrungsart": {
-            "informelles_hilfsmittel": "Informal Tool",
+            "informelles_hilfsmittel": "Informal Aid",
             "bewaehrte_routine": "Proven Routine",
             "informationsluecke": "Information Gap",
             "widerspruch": "Contradiction",
-            "typische_rueckfrage": "Typical Follow-up Question",
+            "typische_rueckfrage": "Typical Query",
             "fehler": "Error",
             "nacharbeit": "Rework",
             "verzoegerung": "Delay",
@@ -2063,7 +2063,7 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
           "erkenntnisklasse": {
             "beobachtete_tatsache": "Observed Fact",
             "ungepruefte_annahme": "Unverified Assumption",
-            "fachlich_bestaetigt": "Technically Confirmed Insight",
+            "fachlich_bestaetigt": "Technically Confirmed Finding",
             "verbindliche_regel": "Binding Rule",
             "situationsabhaengige_entscheidung": "Situation-Dependent Decision"
           }
@@ -2114,8 +2114,8 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
         "fields": {
           "vorgang": "Case",
           "beurteiler": "Assessor",
-          "fachgebiet": "Field of Expertise",
-          "sachverhalt": "Facts of the Matter",
+          "fachgebiet": "Subject Area",
+          "sachverhalt": "Matter",
           "bewertung": "Evaluation",
           "moegliche_erklaerung": "Possible Explanation (Suggestion)",
           "unsicherheiten": "Existing Uncertainties",
@@ -2134,7 +2134,7 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
         }
       },
       "rueckfragen": {
-        "name": "Follow-up Questions",
+        "name": "Queries",
         "app_id": "6ad3100b7be34c09a33018d0",
         "fields": {
           "vorgang": "Case",
@@ -2167,7 +2167,7 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
           "entscheider": "Decision Maker",
           "befugnis_geprueft": "Decision Authority Verified",
           "unsicherheiten": "Remaining Uncertainties",
-          "ki_vorschlag": "Decision Proposal (Non-binding)",
+          "ki_vorschlag": "Decision Proposal (Non-Binding)",
           "entscheidung": "Decision Made",
           "begruendung": "Justification",
           "folgen": "Consequences of Decision",
@@ -2181,7 +2181,7 @@ export const LABELS: Record<CoreLocale, LabelBundle> = {
             "offen": "Open",
             "freigegeben": "Approved",
             "abgelehnt": "Rejected",
-            "unter_vorbehalt": "Provisional"
+            "unter_vorbehalt": "Conditional"
           }
         }
       }

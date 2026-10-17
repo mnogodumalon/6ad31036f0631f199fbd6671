@@ -49,7 +49,7 @@
           "in_mobile_list": false,
           "in_text": false,
           "in_structured_search": null,
-          "in_fulltext_search": null,
+          "in_fulltext_search": false,
           "in_expert_search": true,
           "lookup_data": {
             "vertrieb": "Vertrieb",
@@ -72,7 +72,7 @@
           "in_mobile_list": false,
           "in_text": false,
           "in_structured_search": null,
-          "in_fulltext_search": null,
+          "in_fulltext_search": false,
           "in_expert_search": true
         },
         "entscheidungsbefugnis": {
@@ -87,7 +87,7 @@
           "in_mobile_list": false,
           "in_text": false,
           "in_structured_search": null,
-          "in_fulltext_search": null,
+          "in_fulltext_search": false,
           "in_expert_search": true,
           "lookup_data": {
             "keine": "Keine",
@@ -136,7 +136,7 @@
           "description": "A string value not longer than 4000 characters (or `null`/`None`).",
           "required": false,
           "in_list": true,
-          "in_mobile_list": false,
+          "in_mobile_list": true,
           "in_text": false,
           "in_structured_search": null,
           "in_fulltext_search": true,
@@ -154,7 +154,7 @@
           "in_mobile_list": false,
           "in_text": false,
           "in_structured_search": null,
-          "in_fulltext_search": null,
+          "in_fulltext_search": false,
           "in_expert_search": true
         }
       }

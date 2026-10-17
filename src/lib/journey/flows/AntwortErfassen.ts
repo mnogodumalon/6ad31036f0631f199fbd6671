@@ -1,7 +1,7 @@
 /**
  * useAntwortErfassenFlow — the plumbing of the flow « Antwort erfassen », generated from the plan.
  *
- * Changes `rueckfragen`: the record to change is picked (`flow.pick('rueckfragen')`), the form is prefilled with its values; asks `antwort`, `aenderung_angabe`; sets `antwort_am`, `status` itself.
+ * Changes `rueckfragen`: the record to change is picked (`flow.pick('rueckfragen')`), the form is prefilled with its values; asks `antwort`, `aenderung_angabe`; sets `status`, `antwort_am` itself.
 Changes `anforderungen` (only when the person fills it): the record to change is picked (`flow.pick('anforderungen')`), the form is prefilled with its values; asks `wert`, `erfassungsstatus`.
 Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), the form is prefilled with its values; ; sets `status` itself.
  * The hook OWNS: the form(s) with exactly these fields and the plan's required
@@ -173,8 +173,8 @@ export function useAntwortErfassenFlow(options: AntwortErfassenFlowOptions = {})
         ? { key: 'target:rueckfragen', label: entityLabel('rueckfragen'), value: picks.rueckfragen.labelOf(rueckfragenTargetId) ?? rueckfragenTargetId, step: steps.rueckfragen }
         : undefined,
       values: (): FormValues => ({
-        antwort_am: policyFixedValue('rueckfragen', 'antwort_am') ?? todayIso(),
         status: policyFixedValue('rueckfragen', 'status') ?? "beantwortet",
+        antwort_am: policyFixedValue('rueckfragen', 'antwort_am') ?? todayIso(),
       }),
 
       // the review shows what this step sets itself — changeable on „Deine Anwendung“, not here

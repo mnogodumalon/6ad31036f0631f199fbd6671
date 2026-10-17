@@ -1,8 +1,8 @@
 /**
  * useAnfrageAufnehmenFlow — the plumbing of the flow « Anfrage aufnehmen », generated from the plan.
  *
- * Writes `vorgaenge`: asks `titel`, `kunde`, `kundenanfrage`, `zustaendige_person`; sets `eingangsdatum`, `status`, `prozessschritt`, `freigabestatus` itself.
-Writes `quellen` (only when the person fills it): asks `bezeichnung`, `quellenart`, `fundort`, `version`, `verlaesslichkeit`; links `vorgang` ← the created `vorgaenge`.
+ * Writes `vorgaenge`: asks `kunde`, `titel`, `kundenanfrage`, `zustaendige_person`; sets `status`, `eingangsdatum`, `freigabestatus`, `prozessschritt` itself.
+Writes `quellen` (only when the person fills it): asks `fundort`, `version`, `quellenart`, `bezeichnung`, `verlaesslichkeit`; links `vorgang` ← the created `vorgaenge`.
  * The hook OWNS: the form(s) with exactly these fields and the plan's required
  * ingredients, one record search per picked field (columns and filter from
  * the plan), and the submit plan with its fixed and derived values. A page
@@ -17,18 +17,18 @@ Writes `quellen` (only when the person fills it): asks `bezeichnung`, `quellenar
  *   messages  the sentence for an empty required field, per field
  *
  *   const flow = useAnfrageAufnehmenFlow({
- *     steps: { zustaendige_person: 1, titel: 2, kunde: 2, kundenanfrage: 2, bezeichnung: 2, quellenart: 2, fundort: 2, version: 2, verlaesslichkeit: 2 },
+ *     steps: { zustaendige_person: 1, kunde: 2, titel: 2, kundenanfrage: 2, fundort: 2, version: 2, quellenart: 2, bezeichnung: 2, verlaesslichkeit: 2 },
  *     items: { zustaendige_person: r => ({ id: r.id, title: fieldText(r, 'vorname') }) },
  *   });
  *   <IntentWizardShell forms={flow.forms} draftKey={flow.draftKey} …>
  *     <EntitySelectStep {...flow.picks.zustaendige_person.select} {...flow.pick('zustaendige_person')} />
- *     <Bound form={flow.forms.vorgaenge} name="titel" />
  *     <Bound form={flow.forms.vorgaenge} name="kunde" />
+ *     <Bound form={flow.forms.vorgaenge} name="titel" />
  *     <Bound form={flow.forms.vorgaenge} name="kundenanfrage" />
- *     <Bound form={flow.forms.quellen} name="bezeichnung" />
- *     <Bound form={flow.forms.quellen} name="quellenart" />
  *     <Bound form={flow.forms.quellen} name="fundort" />
  *     <Bound form={flow.forms.quellen} name="version" />
+ *     <Bound form={flow.forms.quellen} name="quellenart" />
+ *     <Bound form={flow.forms.quellen} name="bezeichnung" />
  *     <Bound form={flow.forms.quellen} name="verlaesslichkeit" />
  *     <StepNav onNext={() => flow.validateStep(n)} />
  *     {!flow.submit.done && <SummaryStep forms={flow.formList} submit={flow.submit} />}
@@ -96,16 +96,16 @@ function hasValues(form: StepForm): boolean {
 export function useAnfrageAufnehmenFlow(options: AnfrageAufnehmenFlowOptions = {}) {
   const steps = { ...DEFAULT_STEPS, ...(options.steps ?? {}) } as Record<string, number>;
   const vorgaenge = useStepForm('vorgaenge', {
-    fields: ["titel", "kunde", "kundenanfrage", "zustaendige_person"],
-    steps: only(steps, ["titel", "kunde", "kundenanfrage", "zustaendige_person"]) as Record<string, number>,
-    initial: only(options.initial as FormValues | undefined, ["titel", "kunde", "kundenanfrage", "zustaendige_person"]),
-    messages: only(options.messages as Record<string, string> | undefined, ["titel", "kunde", "kundenanfrage", "zustaendige_person"]),
+    fields: ["kunde", "titel", "kundenanfrage", "zustaendige_person"],
+    steps: only(steps, ["kunde", "titel", "kundenanfrage", "zustaendige_person"]) as Record<string, number>,
+    initial: only(options.initial as FormValues | undefined, ["kunde", "titel", "kundenanfrage", "zustaendige_person"]),
+    messages: only(options.messages as Record<string, string> | undefined, ["kunde", "titel", "kundenanfrage", "zustaendige_person"]),
   });
   const quellen = useStepForm('quellen', {
-    fields: ["bezeichnung", "quellenart", "fundort", "version", "verlaesslichkeit"],
-    steps: only(steps, ["bezeichnung", "quellenart", "fundort", "version", "verlaesslichkeit"]) as Record<string, number>,
-    initial: only(options.initial as FormValues | undefined, ["bezeichnung", "quellenart", "fundort", "version", "verlaesslichkeit"]),
-    messages: only(options.messages as Record<string, string> | undefined, ["bezeichnung", "quellenart", "fundort", "version", "verlaesslichkeit"]),
+    fields: ["fundort", "version", "quellenart", "bezeichnung", "verlaesslichkeit"],
+    steps: only(steps, ["fundort", "version", "quellenart", "bezeichnung", "verlaesslichkeit"]) as Record<string, number>,
+    initial: only(options.initial as FormValues | undefined, ["fundort", "version", "quellenart", "bezeichnung", "verlaesslichkeit"]),
+    messages: only(options.messages as Record<string, string> | undefined, ["fundort", "version", "quellenart", "bezeichnung", "verlaesslichkeit"]),
   });
   const forms: AnfrageAufnehmenForms = { vorgaenge, quellen };
   const formList: StepForm[] = [vorgaenge, quellen];
@@ -145,14 +145,14 @@ export function useAnfrageAufnehmenFlow(options: AnfrageAufnehmenFlowOptions = {
     {
       key: 'vorgaenge', entity: 'vorgaenge', form: vorgaenge, primary: true,
       values: (): FormValues => ({
-        eingangsdatum: policyFixedValue('vorgaenge', 'eingangsdatum') ?? todayIso(),
         status: policyFixedValue('vorgaenge', 'status') ?? "neu",
-        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "anfrage_verstehen",
+        eingangsdatum: policyFixedValue('vorgaenge', 'eingangsdatum') ?? todayIso(),
         freigabestatus: policyFixedValue('vorgaenge', 'freigabestatus') ?? "nicht_freigegeben",
+        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "anfrage_verstehen",
       }),
 
       // the review shows what this step sets itself — changeable on „Deine Anwendung“, not here
-      settings: () => [setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "neu"), setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "anfrage_verstehen"), setting('vorgaenge', 'freigabestatus', policyFixedValue('vorgaenge', 'freigabestatus') ?? "nicht_freigegeben")],
+      settings: () => [setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "neu"), setting('vorgaenge', 'freigabestatus', policyFixedValue('vorgaenge', 'freigabestatus') ?? "nicht_freigegeben"), setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "anfrage_verstehen")],
 
       // the planner's assumptions that first act here — shown once with „Passt“ / „ändern“
       notices: () => [{"assumed": "Einfache laufende Nummer (1, 2, 3 \u2026)", "id": "vorgangsnummer-format", "question": "Wie soll die Vorgangsnummer aufgebaut sein?"}],

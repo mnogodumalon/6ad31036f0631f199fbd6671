@@ -1,8 +1,8 @@
 /**
  * useAnforderungErfassenFlow — the plumbing of the flow « Anforderung erfassen », generated from the plan.
  *
- * Writes `anforderungen`: asks `vorgang`, `bezeichnung`, `beschreibung`, `kategorie`, `wert`, `quelle`, `art_der_angabe`, `erfassungsstatus`, `hinweis_luecke`, `widerspruch_zu`.
-Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), the form is prefilled with its values; ; sets `prozessschritt`, `status` itself.
+ * Writes `anforderungen`: asks `wert`, `quelle`, `vorgang`, `kategorie`, `bezeichnung`, `beschreibung`, `art_der_angabe`, `hinweis_luecke`, `widerspruch_zu`, `erfassungsstatus`.
+Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), the form is prefilled with its values; ; sets `status`, `prozessschritt` itself.
  * The hook OWNS: the form(s) with exactly these fields and the plan's required
  * ingredients, one record search per picked field (columns and filter from
  * the plan), and the submit plan with its fixed and derived values. A page
@@ -17,21 +17,21 @@ Changes `vorgaenge`: the record to change is picked (`flow.pick('vorgaenge')`), 
  *   messages  the sentence for an empty required field, per field
  *
  *   const flow = useAnforderungErfassenFlow({
- *     steps: { vorgaenge: 1, vorgang: 2, quelle: 3, widerspruch_zu: 4, bezeichnung: 5, beschreibung: 5, kategorie: 5, wert: 5, art_der_angabe: 5, erfassungsstatus: 5, hinweis_luecke: 5 },
- *     items: { vorgang: r => ({ id: r.id, title: fieldText(r, 'vorgangsnummer') }) },
+ *     steps: { vorgaenge: 1, quelle: 2, vorgang: 3, widerspruch_zu: 4, wert: 5, kategorie: 5, bezeichnung: 5, beschreibung: 5, art_der_angabe: 5, hinweis_luecke: 5, erfassungsstatus: 5 },
+ *     items: { quelle: r => ({ id: r.id, title: fieldText(r, 'bezeichnung') }) },
  *   });
  *   <IntentWizardShell forms={flow.forms} draftKey={flow.draftKey} …>
- *     <EntitySelectStep {...flow.picks.vorgang.select} {...flow.pick('vorgang')} />
  *     <EntitySelectStep {...flow.picks.quelle.select} {...flow.pick('quelle')} />
+ *     <EntitySelectStep {...flow.picks.vorgang.select} {...flow.pick('vorgang')} />
  *     <EntitySelectStep {...flow.picks.widerspruch_zu.select} {...flow.pick('widerspruch_zu')} />
  *     // the record this flow changes: <EntitySelectStep {...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')} />
+ *     <Bound form={flow.forms.anforderungen} name="wert" />
+ *     <Bound form={flow.forms.anforderungen} name="kategorie" />
  *     <Bound form={flow.forms.anforderungen} name="bezeichnung" />
  *     <Bound form={flow.forms.anforderungen} name="beschreibung" />
- *     <Bound form={flow.forms.anforderungen} name="kategorie" />
- *     <Bound form={flow.forms.anforderungen} name="wert" />
  *     <Bound form={flow.forms.anforderungen} name="art_der_angabe" />
- *     <Bound form={flow.forms.anforderungen} name="erfassungsstatus" />
  *     <Bound form={flow.forms.anforderungen} name="hinweis_luecke" />
+ *     <Bound form={flow.forms.anforderungen} name="erfassungsstatus" />
  *     <StepNav onNext={() => flow.validateStep(n)} />
  *     {!flow.submit.done && <SummaryStep forms={flow.formList} submit={flow.submit} />}
  *     {flow.submit.result && <SuccessStep result={flow.submit.result} forms={flow.formList} submit={flow.submit} />}
@@ -64,14 +64,14 @@ export interface AnforderungErfassenFlowOptions {
   messages?: Partial<Record<Key, string>>;
   /** How a search hit reads — the card's title/subtitle/status per pick. */
   items?: {
-    vorgang?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     quelle?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
+    vorgang?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     widerspruch_zu?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
     vorgaenge?: (record: JourneyRecord, ctx: RefContext) => SelectItemLike;
   };
 }
 
-const DEFAULT_STEPS: Record<string, number> = {"art_der_angabe": 5, "beschreibung": 5, "bezeichnung": 5, "erfassungsstatus": 5, "hinweis_luecke": 5, "kategorie": 5, "quelle": 3, "vorgaenge": 1, "vorgang": 2, "wert": 5, "widerspruch_zu": 4};
+const DEFAULT_STEPS: Record<string, number> = {"art_der_angabe": 5, "beschreibung": 5, "bezeichnung": 5, "erfassungsstatus": 5, "hinweis_luecke": 5, "kategorie": 5, "quelle": 2, "vorgaenge": 1, "vorgang": 3, "wert": 5, "widerspruch_zu": 4};
 export const ANFORDERUNGERFASSEN_REVIEW_STEP = 6;
 
 function fromPick<T>(pick: { recordOf(id: string): JourneyRecord | undefined }, form: StepForm, field: string, read: (r: JourneyRecord) => T): T | undefined {
@@ -104,10 +104,10 @@ export function useAnforderungErfassenFlow(options: AnforderungErfassenFlowOptio
   const steps = { ...DEFAULT_STEPS, ...(options.steps ?? {}) } as Record<string, number>;
   const [vorgaengeTargetId, setVorgaengeTargetId] = useState<string | null>(null);
   const anforderungen = useStepForm('anforderungen', {
-    fields: ["vorgang", "bezeichnung", "beschreibung", "kategorie", "wert", "quelle", "art_der_angabe", "erfassungsstatus", "hinweis_luecke", "widerspruch_zu"],
-    steps: only(steps, ["vorgang", "bezeichnung", "beschreibung", "kategorie", "wert", "quelle", "art_der_angabe", "erfassungsstatus", "hinweis_luecke", "widerspruch_zu"]) as Record<string, number>,
-    initial: only(options.initial as FormValues | undefined, ["vorgang", "bezeichnung", "beschreibung", "kategorie", "wert", "quelle", "art_der_angabe", "erfassungsstatus", "hinweis_luecke", "widerspruch_zu"]),
-    messages: only(options.messages as Record<string, string> | undefined, ["vorgang", "bezeichnung", "beschreibung", "kategorie", "wert", "quelle", "art_der_angabe", "erfassungsstatus", "hinweis_luecke", "widerspruch_zu"]),
+    fields: ["wert", "quelle", "vorgang", "kategorie", "bezeichnung", "beschreibung", "art_der_angabe", "hinweis_luecke", "widerspruch_zu", "erfassungsstatus"],
+    steps: only(steps, ["wert", "quelle", "vorgang", "kategorie", "bezeichnung", "beschreibung", "art_der_angabe", "hinweis_luecke", "widerspruch_zu", "erfassungsstatus"]) as Record<string, number>,
+    initial: only(options.initial as FormValues | undefined, ["wert", "quelle", "vorgang", "kategorie", "bezeichnung", "beschreibung", "art_der_angabe", "hinweis_luecke", "widerspruch_zu", "erfassungsstatus"]),
+    messages: only(options.messages as Record<string, string> | undefined, ["wert", "quelle", "vorgang", "kategorie", "bezeichnung", "beschreibung", "art_der_angabe", "hinweis_luecke", "widerspruch_zu", "erfassungsstatus"]),
   });
   const vorgaenge = useStepForm('vorgaenge', {
     fields: [],
@@ -123,15 +123,15 @@ export function useAnforderungErfassenFlow(options: AnforderungErfassenFlowOptio
   // render time, so a change works on the running application.
   usePolicyVersion();
   const searches = {
+    quelle: useRecordSearch(servicePort, 'quellen', withPickPolicy('quelle', {
+      searchFields: ["bezeichnung"] as never,
+      toItem: options.items?.quelle as never,
+    })),
     vorgang: useRecordSearch(servicePort, 'vorgaenge', withPickPolicy('vorgang', {
       searchFields: ["vorgangsnummer", "titel", "kunde"] as never,
       filter: "r.v_status != 'abgeschlossen'",
       where: (r: JourneyRecord) => (fieldLookup(r, "status")?.key ?? null) !== "abgeschlossen",
       toItem: options.items?.vorgang as never,
-    })),
-    quelle: useRecordSearch(servicePort, 'quellen', withPickPolicy('quelle', {
-      searchFields: ["bezeichnung"] as never,
-      toItem: options.items?.quelle as never,
     })),
     widerspruch_zu: useRecordSearch(servicePort, 'anforderungen', withPickPolicy('widerspruch_zu', {
       searchFields: ["bezeichnung", "wert"] as never,
@@ -159,8 +159,8 @@ export function useAnforderungErfassenFlow(options: AnforderungErfassenFlowOptio
     href: `#/verwaltung/anwendung?line=intent:anforderung-erfassen:write:${entity}.${field}`,
   });
   const picks = {
-    vorgang: { ...searches.vorgang, select: { ...searches.vorgang.select, create: false as boolean, hint: hintFor('vorgang', 'vorgaenge', {"conditions": [{"field": "status", "op": "ne", "value": "abgeschlossen"}], "mode": "all"} as PickWhere | null) } },
     quelle: { ...searches.quelle, select: { ...searches.quelle.select, create: false as boolean, hint: hintFor('quelle', 'quellen', null as PickWhere | null) } },
+    vorgang: { ...searches.vorgang, select: { ...searches.vorgang.select, create: false as boolean, hint: hintFor('vorgang', 'vorgaenge', {"conditions": [{"field": "status", "op": "ne", "value": "abgeschlossen"}], "mode": "all"} as PickWhere | null) } },
     widerspruch_zu: { ...searches.widerspruch_zu, select: { ...searches.widerspruch_zu.select, create: false as boolean, hint: hintFor('widerspruch_zu', 'anforderungen', null as PickWhere | null) } },
     vorgaenge: { ...searches.vorgaenge, select: { ...searches.vorgaenge.select, create: false as boolean, hint: hintFor('vorgaenge', 'vorgaenge', {"conditions": [{"field": "status", "op": "ne", "value": "abgeschlossen"}], "mode": "all"} as PickWhere | null) } },
   };
@@ -176,12 +176,12 @@ export function useAnforderungErfassenFlow(options: AnforderungErfassenFlowOptio
         ? { key: 'target:vorgaenge', label: entityLabel('vorgaenge'), value: picks.vorgaenge.labelOf(vorgaengeTargetId) ?? vorgaengeTargetId, step: steps.vorgaenge }
         : undefined,
       values: (): FormValues => ({
-        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "informationen_pruefen",
         status: policyFixedValue('vorgaenge', 'status') ?? "in_klaerung",
+        prozessschritt: policyFixedValue('vorgaenge', 'prozessschritt') ?? "informationen_pruefen",
       }),
 
       // the review shows what this step sets itself — changeable on „Deine Anwendung“, not here
-      settings: () => [setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "informationen_pruefen"), setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "in_klaerung")],
+      settings: () => [setting('vorgaenge', 'status', policyFixedValue('vorgaenge', 'status') ?? "in_klaerung"), setting('vorgaenge', 'prozessschritt', policyFixedValue('vorgaenge', 'prozessschritt') ?? "informationen_pruefen")],
     },
   ];
 

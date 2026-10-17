@@ -43,12 +43,12 @@ export interface IntentLink {
 
 export const INTENTS: IntentLink[] = [
   // <custom:intents>
-  { path: '/intents/anfrage-aufnehmen', label: { de: 'Anfrage aufnehmen', en: 'Record inquiry' }, icon: IconInbox, description: 'Neue Kundenanfrage als Vorgang anlegen, zuständige Person zuordnen und erste Quellen erfassen.' },
-  { path: '/intents/anforderung-erfassen', label: { de: 'Anforderung erfassen', en: 'Capture requirement' }, icon: IconListCheck, description: 'Anforderung mit Quelle erfassen, Lücken und Widersprüche markieren.' },
-  { path: '/intents/beurteilung-vorbereiten', label: { de: 'Beurteilung vorbereiten', en: 'Prepare assessment' }, icon: IconClipboardCheck, description: 'Fachliche Beurteilung zu einer Anforderung anlegen und der zuständigen Person zuordnen.' },
-  { path: '/intents/rueckfrage-stellen', label: { de: 'Rückfrage vorbereiten', en: 'Prepare follow-up question' }, icon: IconMessageQuestion, description: 'Rückfrage an zuständigen Beteiligten richten, mit Anforderung verbinden und bündeln.' },
-  { path: '/intents/antwort-erfassen', label: { de: 'Antwort erfassen', en: 'Record answer' }, icon: IconMessageCheck, description: 'Eingehende Antwort der Rückfrage zuordnen, Änderungen an Angaben festhalten und Anforderung aktualisieren.' },
-  { path: '/intents/entscheidung-treffen', label: { de: 'Entscheidung treffen', en: 'Make decision' }, icon: IconGavel, description: 'Entscheidung mit Regel, Beurteilung, Entscheider und Befugnisprüfung festhalten.' },
+  { path: '/intents/anfrage-aufnehmen', label: { de: 'Anfrage aufnehmen', en: 'Record inquiry' }, icon: IconInbox, description: { de: 'Neue Kundenanfrage als Vorgang anlegen, zuständige Person zuordnen und erste Quellen erfassen.', en: 'Create a new customer inquiry as a case, assign a responsible person, and record initial sources.' } },
+  { path: '/intents/anforderung-erfassen', label: { de: 'Anforderung erfassen', en: 'Capture requirement' }, icon: IconListCheck, description: { de: 'Anforderung mit Quelle erfassen, Lücken und Widersprüche markieren.', en: 'Record requirement with source, mark gaps and contradictions.' } },
+  { path: '/intents/beurteilung-vorbereiten', label: { de: 'Beurteilung vorbereiten', en: 'Prepare assessment' }, icon: IconClipboardCheck, description: { de: 'Fachliche Beurteilung zu einer Anforderung anlegen und der zuständigen Person zuordnen.', en: 'Create a technical assessment for a requirement and assign it to the responsible person.' } },
+  { path: '/intents/rueckfrage-stellen', label: { de: 'Rückfrage vorbereiten', en: 'Prepare follow-up question' }, icon: IconMessageQuestion, description: { de: 'Rückfrage an zuständigen Beteiligten richten, mit Anforderung verbinden und bündeln.', en: 'Send follow-up question to the responsible stakeholder, link it to a requirement, and group it.' } },
+  { path: '/intents/antwort-erfassen', label: { de: 'Antwort erfassen', en: 'Record answer' }, icon: IconMessageCheck, description: { de: 'Eingehende Antwort der Rückfrage zuordnen, Änderungen an Angaben festhalten und Anforderung aktualisieren.', en: 'Assign incoming response to the follow-up question, record changes to details, and update the requirement.' } },
+  { path: '/intents/entscheidung-treffen', label: { de: 'Entscheidung treffen', en: 'Make decision' }, icon: IconGavel, description: { de: 'Entscheidung mit Regel, Beurteilung, Entscheider und Befugnisprüfung festhalten.', en: 'Record decision with rule, assessment, decision-maker, and authority check.' } },
   // </custom:intents>
 ];
 
@@ -68,5 +68,5 @@ export const INTENTS_PENDING = false;
  * pulsing "werden erstellt …" in every deployed Phase-1 bundle forever — no
  * code path redeploys Phase 1 without the flag (live 03.09.2026).
  */
-export const INTENTS_PENDING_SINCE: string | null = '2026-10-17T06:07:54+00:00';
+export const INTENTS_PENDING_SINCE: string | null = null;
 export const PENDING_MAX_MINUTES = 30;

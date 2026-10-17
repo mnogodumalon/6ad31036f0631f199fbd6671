@@ -358,7 +358,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="vorgangsnummer">{fieldLabel('vorgaenge', 'vorgangsnummer')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Input
           id="vorgangsnummer"
-          placeholder="z. B. VG-2026-001"
+          placeholder=""
           value={fields.vorgangsnummer ?? ''}
           onChange={e => setFields(f => ({ ...f, vorgangsnummer: e.target.value }))}
           required
@@ -373,7 +373,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="titel">{fieldLabel('vorgaenge', 'titel')} <span className="text-destructive" aria-hidden="true">*</span></Label>
         <Input
           id="titel"
-          placeholder="z. B. Angebot Büroumbau"
+          placeholder=""
           value={fields.titel ?? ''}
           onChange={e => setFields(f => ({ ...f, titel: e.target.value }))}
           required
@@ -388,7 +388,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="kunde">{fieldLabel('vorgaenge', 'kunde')}</Label>
         <Input
           id="kunde"
-          placeholder="z. B. Muster GmbH"
+          placeholder=""
           value={fields.kunde ?? ''}
           onChange={e => setFields(f => ({ ...f, kunde: e.target.value }))}
         />
@@ -399,7 +399,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="eingangsdatum">{fieldLabel('vorgaenge', 'eingangsdatum')}</Label>
         <DatePicker
           id="eingangsdatum"
-          placeholder="Wann kam die Anfrage?"
+          placeholder=""
           mode="date"
           value={fields.eingangsdatum ?? null}
           onChange={v => setFields(f => ({ ...f, eingangsdatum: v ?? undefined }))}
@@ -411,7 +411,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="kundenanfrage">{fieldLabel('vorgaenge', 'kundenanfrage')}</Label>
         <Textarea
           id="kundenanfrage"
-          placeholder="Anfrage im Originaltext"
+          placeholder=""
           value={fields.kundenanfrage ?? ''}
           onChange={e => setFields(f => ({ ...f, kundenanfrage: e.target.value }))}
           rows={3}
@@ -423,7 +423,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="zustaendige_person">{fieldLabel('vorgaenge', 'zustaendige_person')}</Label>
         <Combobox
           id="zustaendige_person"
-          placeholder="Wer ist zuständig?"
+          placeholder=""
           items={beteiligteListAll.map(r => ({
             id: r.record_id,
             label: String(r.fields.vorname ?? r.record_id),
@@ -442,7 +442,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
           value={lookupKey(fields.prozessschritt) ?? ''}
           onValueChange={v => setFields(f => ({ ...f, prozessschritt: v === 'none' ? undefined : v as any }))}
         >
-          <SelectTrigger id="prozessschritt" className="max-sm:h-11"><SelectValue placeholder="z. B. Anfrage verstehen" /></SelectTrigger>
+          <SelectTrigger id="prozessschritt" className="max-sm:h-11"><SelectValue placeholder="" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="none">—</SelectItem>
             <SelectItem value="auftragsentwurf_pruefen">{lookupLabel('vorgaenge', 'prozessschritt', 'auftragsentwurf_pruefen') ?? 'Auftragsentwurf prüfen'}</SelectItem>
@@ -593,7 +593,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="auftragsentwurf">{fieldLabel('vorgaenge', 'auftragsentwurf')}</Label>
         <Textarea
           id="auftragsentwurf"
-          placeholder="Entwurf des Auftrags"
+          placeholder=""
           value={fields.auftragsentwurf ?? ''}
           onChange={e => setFields(f => ({ ...f, auftragsentwurf: e.target.value }))}
           rows={3}
@@ -605,7 +605,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="geklaerte_punkte">{fieldLabel('vorgaenge', 'geklaerte_punkte')}</Label>
         <Textarea
           id="geklaerte_punkte"
-          placeholder="Ein Punkt pro Zeile"
+          placeholder=""
           value={fields.geklaerte_punkte ?? ''}
           onChange={e => setFields(f => ({ ...f, geklaerte_punkte: e.target.value }))}
           rows={3}
@@ -617,7 +617,7 @@ export function VorgaengeDialog({ open, onClose, onSubmit, defaultValues, record
         <Label htmlFor="offene_punkte">{fieldLabel('vorgaenge', 'offene_punkte')}</Label>
         <Textarea
           id="offene_punkte"
-          placeholder="Ein Punkt pro Zeile"
+          placeholder=""
           value={fields.offene_punkte ?? ''}
           onChange={e => setFields(f => ({ ...f, offene_punkte: e.target.value }))}
           rows={3}
