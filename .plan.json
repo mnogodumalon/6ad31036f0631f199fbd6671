@@ -1,0 +1,503 @@
+{
+  "version": 1,
+  "language": "de",
+  "understanding": {
+    "summary": "Die Anwendung organisiert das technische Anfrage- und Angebotsmanagement. Jede Kundenanfrage wird als Vorgang geführt: von der Aufnahme über die Erfassung von Anforderungen mit Quellen, fachliche Beurteilungen, Rückfragen an die richtigen Beteiligten und Entscheidungen mit Regeln und Befugnissen bis zum Auftragsentwurf. Erfahrungen aus dem Auftrag werden festgehalten, damit sie später geprüft und wiederverwendet werden können.",
+    "roles": [
+      "Vertrieb",
+      "Konstruktion",
+      "Arbeitsvorbereitung",
+      "Qualitätssicherung",
+      "Entscheider und Freigeber",
+      "Administration"
+    ],
+    "main_tasks": [
+      "Anfrage aufnehmen und Quellen zusammenführen",
+      "Anforderungen erfassen, Lücken und Widersprüche sichtbar machen",
+      "Fachliche Beurteilungen vorbereiten",
+      "Rückfragen bündeln und an Beteiligte richten",
+      "Entscheidungen und Freigaben nachvollziehbar treffen",
+      "Auftragsentwurf prüfen und übergeben",
+      "Erfahrungen festhalten"
+    ],
+    "platform_roles": [
+      {
+        "persona": "Vertrieb",
+        "role": "datenverarbeitung",
+        "apps": [
+          "vorgaenge",
+          "quellen",
+          "anforderungen",
+          "rueckfragen",
+          "erfahrungen",
+          "beteiligte",
+          "regelwerk",
+          "beurteilungen"
+        ]
+      },
+      {
+        "persona": "Konstruktion",
+        "role": "standard",
+        "apps": [
+          "beurteilungen",
+          "anforderungen",
+          "rueckfragen",
+          "erfahrungen",
+          "vorgaenge",
+          "quellen",
+          "beteiligte",
+          "regelwerk"
+        ]
+      },
+      {
+        "persona": "Arbeitsvorbereitung",
+        "role": "standard",
+        "apps": [
+          "beurteilungen",
+          "anforderungen",
+          "rueckfragen",
+          "erfahrungen",
+          "vorgaenge",
+          "quellen",
+          "beteiligte",
+          "regelwerk"
+        ]
+      },
+      {
+        "persona": "Qualitätssicherung",
+        "role": "standard",
+        "apps": [
+          "beurteilungen",
+          "anforderungen",
+          "rueckfragen",
+          "erfahrungen",
+          "vorgaenge",
+          "quellen",
+          "beteiligte",
+          "regelwerk"
+        ]
+      },
+      {
+        "persona": "Entscheider und Freigeber",
+        "role": "datenverarbeitung",
+        "apps": [
+          "entscheidungen",
+          "beurteilungen",
+          "vorgaenge",
+          "regelwerk",
+          "beteiligte",
+          "quellen",
+          "anforderungen",
+          "rueckfragen"
+        ]
+      },
+      {
+        "persona": "Administration",
+        "role": "administrator",
+        "apps": [
+          "beteiligte",
+          "regelwerk",
+          "vorgaenge",
+          "quellen",
+          "erfahrungen",
+          "anforderungen",
+          "beurteilungen",
+          "rueckfragen",
+          "entscheidungen"
+        ]
+      }
+    ]
+  },
+  "flows": [
+    {
+      "slug": "anfrage-aufnehmen",
+      "label": {
+        "de": "Anfrage aufnehmen",
+        "en": "Record inquiry"
+      },
+      "description": "Neue Kundenanfrage als Vorgang anlegen, zuständige Person zuordnen und erste Quellen erfassen.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "vorgaenge",
+          "op": "create",
+          "when": "always",
+          "fields": {
+            "titel": "user",
+            "kunde": "user",
+            "eingangsdatum": "derived:today",
+            "kundenanfrage": "user",
+            "zustaendige_person": "picked",
+            "status": "fixed:neu",
+            "prozessschritt": "fixed:anfrage_verstehen",
+            "freigabestatus": "fixed:nicht_freigegeben"
+          },
+          "needs": {}
+        },
+        {
+          "entity": "quellen",
+          "op": "create",
+          "when": "optional",
+          "fields": {
+            "vorgang": "picked",
+            "bezeichnung": "user",
+            "quellenart": "user",
+            "fundort": "user",
+            "version": "user",
+            "verlaesslichkeit": "user"
+          },
+          "needs": {}
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `anfrage-aufnehmen` — Anfrage aufnehmen\nNeue Kundenanfrage als Vorgang anlegen, zuständige Person zuordnen und erste Quellen erfassen.\n\n## Your hook — import it, never rebuild what it owns\n`import { useAnfrageAufnehmenFlow } from '@/lib/journey/flows/AnfrageAufnehmen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: zustaendige_person, vorgang), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Titel, Kunde, Eingangsdatum und Kundenanfrage im Wortlaut eingeben\n2. Zuständige Person aus den Beteiligten wählen\n3. Erste Quelle mit Bezeichnung, Art und Fundort erfassen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- creates `vorgaenge`:\n    - `titel`: the user enters it (bind it through the layer: form.field/…)\n    - `kunde`: the user enters it (bind it through the layer: form.field/…)\n    - `eingangsdatum`: derived: today() — set it in the plan step, never ask\n    - `kundenanfrage`: the user enters it (bind it through the layer: form.field/…)\n    - `zustaendige_person`: from the record the user picks in this flow\n    - `status`: fixed value `neu` — set it in the plan step's values, never ask\n    - `prozessschritt`: fixed value `anfrage_verstehen` — set it in the plan step's values, never ask\n    - `freigabestatus`: fixed value `nicht_freigegeben` — set it in the plan step's values, never ask\n- creates `quellen` (only when the flow needs it):\n    - `vorgang`: from the record the user picks in this flow\n    - `bezeichnung`: the user enters it (bind it through the layer: form.field/…)\n    - `quellenart`: the user enters it (bind it through the layer: form.field/…)\n    - `fundort`: the user enters it (bind it through the layer: form.field/…)\n    - `version`: the user enters it (bind it through the layer: form.field/…)\n    - `verlaesslichkeit`: the user enters it (bind it through the layer: form.field/…)\n\n## Reads\n- `beteiligte` columns vorname, nachname, stelle\n\n## Success page\n- shows: `vorgaenge.vorgangsnummer`, `vorgaenge.titel`\n- next flows to offer: `anforderung-erfassen`\n\n## Never write these — another flow or a tool owns them\n- `anforderungen.vorgang` (owner: intent `anforderung-erfassen`)\n- `anforderungen.bezeichnung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.beschreibung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.kategorie` (owner: intent `anforderung-erfassen`)\n- `anforderungen.wert` (owner: intent `anforderung-erfassen`)\n- `anforderungen.quelle` (owner: intent `anforderung-erfassen`)\n- `anforderungen.art_der_angabe` (owner: intent `anforderung-erfassen`)\n- `anforderungen.erfassungsstatus` (owner: intent `anforderung-erfassen`)\n- `anforderungen.hinweis_luecke` (owner: intent `anforderung-erfassen`)\n- `anforderungen.widerspruch_zu` (owner: intent `anforderung-erfassen`)\n- `beurteilungen.vorgang` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.anforderung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteiler` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachgebiet` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.sachverhalt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.bewertung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.moegliche_erklaerung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.unsicherheiten` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachlich_bestaetigt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteilt_am` (owner: intent `beurteilung-vorbereiten`)\n- `rueckfragen.vorgang` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.anforderung` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.adressat` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.fragetext` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.buendelungsgruppe` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.status` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.antwort` (owner: intent `antwort-erfassen`)\n- `rueckfragen.antwort_am` (owner: intent `antwort-erfassen`)\n- `rueckfragen.aenderung_angabe` (owner: intent `antwort-erfassen`)\n- `entscheidungen.vorgang` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.anforderung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.beurteilung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.regel` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheider` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.befugnis_geprueft` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.gegenstand` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.unsicherheiten` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.ki_vorschlag` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.begruendung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.folgen` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidungsdatum` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.freigabestatus` (owner: intent `entscheidung-treffen`)\n- `vorgaenge.vorgangsnummer` (owner: tool `vorgangsnummer-vergeben`)\n- `rueckfragen.gestellt_am` (owner: tool `rueckfrage-datum-setzen`)\n- `vorgaenge.geklaerte_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.offene_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.uebergabefaehig` (owner: tool `punkte-zusammenfassen`)\n"
+    },
+    {
+      "slug": "anforderung-erfassen",
+      "label": {
+        "de": "Anforderung erfassen",
+        "en": "Capture requirement"
+      },
+      "description": "Anforderung mit Quelle erfassen, Lücken und Widersprüche markieren.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "anforderungen",
+          "op": "create",
+          "when": "always",
+          "fields": {
+            "vorgang": "picked",
+            "bezeichnung": "user",
+            "beschreibung": "user",
+            "kategorie": "user",
+            "wert": "user",
+            "quelle": "picked",
+            "art_der_angabe": "user",
+            "erfassungsstatus": "user",
+            "hinweis_luecke": "user",
+            "widerspruch_zu": "picked"
+          },
+          "needs": {}
+        },
+        {
+          "entity": "vorgaenge",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "prozessschritt": "fixed:informationen_pruefen",
+            "status": "fixed:in_klaerung"
+          },
+          "needs": {}
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `anforderung-erfassen` — Anforderung erfassen\nAnforderung mit Quelle erfassen, Lücken und Widersprüche markieren.\n\n## Your hook — import it, never rebuild what it owns\n`import { useAnforderungErfassenFlow } from '@/lib/journey/flows/AnforderungErfassen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: vorgang, quelle, widerspruch_zu), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. This flow CHANGES a record of `vorgaenge`: `{...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Vorgang wählen\n2. Anforderung mit Kategorie und Wert eingeben\n3. Quelle wählen und Art der Angabe festlegen\n4. Erfassungsstatus setzen, bei Lücke oder Widerspruch Hinweis und ggf. widersprüchliche Anforderung angeben\n5. Vorgang auf Informationen prüfen setzen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- creates `anforderungen`:\n    - `vorgang`: from the record the user picks in this flow\n    - `bezeichnung`: the user enters it (bind it through the layer: form.field/…)\n    - `beschreibung`: the user enters it (bind it through the layer: form.field/…)\n    - `kategorie`: the user enters it (bind it through the layer: form.field/…)\n    - `wert`: the user enters it (bind it through the layer: form.field/…)\n    - `quelle`: from the record the user picks in this flow\n    - `art_der_angabe`: the user enters it (bind it through the layer: form.field/…)\n    - `erfassungsstatus`: the user enters it (bind it through the layer: form.field/…)\n    - `hinweis_luecke`: the user enters it (bind it through the layer: form.field/…)\n    - `widerspruch_zu`: from the record the user picks in this flow\n- updates `vorgaenge`:\n    - `prozessschritt`: fixed value `informationen_pruefen` — set it in the plan step's values, never ask\n    - `status`: fixed value `in_klaerung` — set it in the plan step's values, never ask\n\n## Reads\n- `vorgaenge` columns vorgangsnummer, titel, kunde\n- `quellen` columns bezeichnung, quellenart, verlaesslichkeit\n- `anforderungen` columns bezeichnung, wert, erfassungsstatus\n\n## Success page\n- shows: `anforderungen.bezeichnung`, `anforderungen.erfassungsstatus`\n- next flows to offer: `rueckfrage-stellen`\n\n## Never write these — another flow or a tool owns them\n- `vorgaenge.titel` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kunde` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.eingangsdatum` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kundenanfrage` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.zustaendige_person` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.freigabestatus` (owner: intent `anfrage-aufnehmen`)\n- `quellen.vorgang` (owner: intent `anfrage-aufnehmen`)\n- `quellen.bezeichnung` (owner: intent `anfrage-aufnehmen`)\n- `quellen.quellenart` (owner: intent `anfrage-aufnehmen`)\n- `quellen.fundort` (owner: intent `anfrage-aufnehmen`)\n- `quellen.version` (owner: intent `anfrage-aufnehmen`)\n- `quellen.verlaesslichkeit` (owner: intent `anfrage-aufnehmen`)\n- `beurteilungen.vorgang` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.anforderung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteiler` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachgebiet` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.sachverhalt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.bewertung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.moegliche_erklaerung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.unsicherheiten` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachlich_bestaetigt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteilt_am` (owner: intent `beurteilung-vorbereiten`)\n- `rueckfragen.vorgang` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.anforderung` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.adressat` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.fragetext` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.buendelungsgruppe` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.status` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.antwort` (owner: intent `antwort-erfassen`)\n- `rueckfragen.antwort_am` (owner: intent `antwort-erfassen`)\n- `rueckfragen.aenderung_angabe` (owner: intent `antwort-erfassen`)\n- `entscheidungen.vorgang` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.anforderung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.beurteilung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.regel` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheider` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.befugnis_geprueft` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.gegenstand` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.unsicherheiten` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.ki_vorschlag` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.begruendung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.folgen` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidungsdatum` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.freigabestatus` (owner: intent `entscheidung-treffen`)\n- `vorgaenge.vorgangsnummer` (owner: tool `vorgangsnummer-vergeben`)\n- `rueckfragen.gestellt_am` (owner: tool `rueckfrage-datum-setzen`)\n- `vorgaenge.geklaerte_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.offene_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.uebergabefaehig` (owner: tool `punkte-zusammenfassen`)\n"
+    },
+    {
+      "slug": "beurteilung-vorbereiten",
+      "label": {
+        "de": "Beurteilung vorbereiten",
+        "en": "Prepare assessment"
+      },
+      "description": "Fachliche Beurteilung zu einer Anforderung anlegen und der zuständigen Person zuordnen.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "beurteilungen",
+          "op": "create",
+          "when": "always",
+          "fields": {
+            "vorgang": "picked",
+            "anforderung": "picked",
+            "beurteiler": "picked",
+            "fachgebiet": "user",
+            "sachverhalt": "user",
+            "bewertung": "user",
+            "moegliche_erklaerung": "user",
+            "unsicherheiten": "user",
+            "fachlich_bestaetigt": "user",
+            "beurteilt_am": "derived:today"
+          },
+          "needs": {}
+        },
+        {
+          "entity": "vorgaenge",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "prozessschritt": "fixed:beurteilungen_vorbereiten"
+          },
+          "needs": {}
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `beurteilung-vorbereiten` — Beurteilung vorbereiten\nFachliche Beurteilung zu einer Anforderung anlegen und der zuständigen Person zuordnen.\n\n## Your hook — import it, never rebuild what it owns\n`import { useBeurteilungVorbereitenFlow } from '@/lib/journey/flows/BeurteilungVorbereiten';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: vorgang, anforderung, beurteiler), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. This flow CHANGES a record of `vorgaenge`: `{...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Vorgang und Anforderung wählen\n2. Beurteilende Person und Fachgebiet wählen\n3. Sachverhalt, Bewertung, mögliche Erklärung und Unsicherheiten erfassen\n4. Fachliche Bestätigung festhalten\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- creates `beurteilungen`:\n    - `vorgang`: from the record the user picks in this flow\n    - `anforderung`: from the record the user picks in this flow\n    - `beurteiler`: from the record the user picks in this flow\n    - `fachgebiet`: the user enters it (bind it through the layer: form.field/…)\n    - `sachverhalt`: the user enters it (bind it through the layer: form.field/…)\n    - `bewertung`: the user enters it (bind it through the layer: form.field/…)\n    - `moegliche_erklaerung`: the user enters it (bind it through the layer: form.field/…)\n    - `unsicherheiten`: the user enters it (bind it through the layer: form.field/…)\n    - `fachlich_bestaetigt`: the user enters it (bind it through the layer: form.field/…)\n    - `beurteilt_am`: derived: today() — set it in the plan step, never ask\n- updates `vorgaenge`:\n    - `prozessschritt`: fixed value `beurteilungen_vorbereiten` — set it in the plan step's values, never ask\n\n## Reads\n- `anforderungen` columns bezeichnung, wert, erfassungsstatus, vorgang\n- `beteiligte` columns vorname, nachname, stelle, entscheidungsbefugnis\n\n## Success page\n- shows: `beurteilungen.sachverhalt`, `beurteilungen.fachlich_bestaetigt`\n- next flows to offer: `rueckfrage-stellen`\n\n## Never write these — another flow or a tool owns them\n- `vorgaenge.titel` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kunde` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.eingangsdatum` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kundenanfrage` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.zustaendige_person` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.status` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.freigabestatus` (owner: intent `anfrage-aufnehmen`)\n- `quellen.vorgang` (owner: intent `anfrage-aufnehmen`)\n- `quellen.bezeichnung` (owner: intent `anfrage-aufnehmen`)\n- `quellen.quellenart` (owner: intent `anfrage-aufnehmen`)\n- `quellen.fundort` (owner: intent `anfrage-aufnehmen`)\n- `quellen.version` (owner: intent `anfrage-aufnehmen`)\n- `quellen.verlaesslichkeit` (owner: intent `anfrage-aufnehmen`)\n- `anforderungen.vorgang` (owner: intent `anforderung-erfassen`)\n- `anforderungen.bezeichnung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.beschreibung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.kategorie` (owner: intent `anforderung-erfassen`)\n- `anforderungen.wert` (owner: intent `anforderung-erfassen`)\n- `anforderungen.quelle` (owner: intent `anforderung-erfassen`)\n- `anforderungen.art_der_angabe` (owner: intent `anforderung-erfassen`)\n- `anforderungen.erfassungsstatus` (owner: intent `anforderung-erfassen`)\n- `anforderungen.hinweis_luecke` (owner: intent `anforderung-erfassen`)\n- `anforderungen.widerspruch_zu` (owner: intent `anforderung-erfassen`)\n- `rueckfragen.vorgang` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.anforderung` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.adressat` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.fragetext` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.buendelungsgruppe` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.status` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.antwort` (owner: intent `antwort-erfassen`)\n- `rueckfragen.antwort_am` (owner: intent `antwort-erfassen`)\n- `rueckfragen.aenderung_angabe` (owner: intent `antwort-erfassen`)\n- `entscheidungen.vorgang` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.anforderung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.beurteilung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.regel` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheider` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.befugnis_geprueft` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.gegenstand` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.unsicherheiten` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.ki_vorschlag` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.begruendung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.folgen` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidungsdatum` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.freigabestatus` (owner: intent `entscheidung-treffen`)\n- `vorgaenge.vorgangsnummer` (owner: tool `vorgangsnummer-vergeben`)\n- `rueckfragen.gestellt_am` (owner: tool `rueckfrage-datum-setzen`)\n- `vorgaenge.geklaerte_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.offene_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.uebergabefaehig` (owner: tool `punkte-zusammenfassen`)\n"
+    },
+    {
+      "slug": "rueckfrage-stellen",
+      "label": {
+        "de": "Rückfrage vorbereiten",
+        "en": "Prepare follow-up question"
+      },
+      "description": "Rückfrage an zuständigen Beteiligten richten, mit Anforderung verbinden und bündeln.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "rueckfragen",
+          "op": "create",
+          "when": "always",
+          "fields": {
+            "vorgang": "picked",
+            "anforderung": "picked",
+            "adressat": "picked",
+            "fragetext": "user",
+            "buendelungsgruppe": "user",
+            "status": "fixed:vorbereitet"
+          },
+          "needs": {}
+        },
+        {
+          "entity": "vorgaenge",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "prozessschritt": "fixed:kommunikation_organisieren",
+            "status": "fixed:wartet_auf_antwort"
+          },
+          "needs": {}
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `rueckfrage-stellen` — Rückfrage vorbereiten\nRückfrage an zuständigen Beteiligten richten, mit Anforderung verbinden und bündeln.\n\n## Your hook — import it, never rebuild what it owns\n`import { useRueckfrageStellenFlow } from '@/lib/journey/flows/RueckfrageStellen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: vorgang, anforderung, adressat), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. This flow CHANGES a record of `vorgaenge`: `{...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Vorgang und betroffene Anforderung wählen\n2. Adressat wählen\n3. Fragetext und Bündelungsgruppe eingeben\n4. Vorgang auf wartet auf Antwort setzen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- creates `rueckfragen`:\n    - `vorgang`: from the record the user picks in this flow\n    - `anforderung`: from the record the user picks in this flow\n    - `adressat`: from the record the user picks in this flow\n    - `fragetext`: the user enters it (bind it through the layer: form.field/…)\n    - `buendelungsgruppe`: the user enters it (bind it through the layer: form.field/…)\n    - `status`: fixed value `vorbereitet` — set it in the plan step's values, never ask\n- updates `vorgaenge`:\n    - `prozessschritt`: fixed value `kommunikation_organisieren` — set it in the plan step's values, never ask\n    - `status`: fixed value `wartet_auf_antwort` — set it in the plan step's values, never ask\n\n## Reads\n- `anforderungen` columns bezeichnung, erfassungsstatus, hinweis_luecke\n- `beteiligte` columns vorname, nachname, stelle, zustaendigkeitsbereich\n\n## Success page\n- shows: `rueckfragen.fragetext`, `rueckfragen.status`\n- next flows to offer: `antwort-erfassen`\n\n## Never write these — another flow or a tool owns them\n- `vorgaenge.titel` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kunde` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.eingangsdatum` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kundenanfrage` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.zustaendige_person` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.freigabestatus` (owner: intent `anfrage-aufnehmen`)\n- `quellen.vorgang` (owner: intent `anfrage-aufnehmen`)\n- `quellen.bezeichnung` (owner: intent `anfrage-aufnehmen`)\n- `quellen.quellenart` (owner: intent `anfrage-aufnehmen`)\n- `quellen.fundort` (owner: intent `anfrage-aufnehmen`)\n- `quellen.version` (owner: intent `anfrage-aufnehmen`)\n- `quellen.verlaesslichkeit` (owner: intent `anfrage-aufnehmen`)\n- `anforderungen.vorgang` (owner: intent `anforderung-erfassen`)\n- `anforderungen.bezeichnung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.beschreibung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.kategorie` (owner: intent `anforderung-erfassen`)\n- `anforderungen.wert` (owner: intent `anforderung-erfassen`)\n- `anforderungen.quelle` (owner: intent `anforderung-erfassen`)\n- `anforderungen.art_der_angabe` (owner: intent `anforderung-erfassen`)\n- `anforderungen.erfassungsstatus` (owner: intent `anforderung-erfassen`)\n- `anforderungen.hinweis_luecke` (owner: intent `anforderung-erfassen`)\n- `anforderungen.widerspruch_zu` (owner: intent `anforderung-erfassen`)\n- `beurteilungen.vorgang` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.anforderung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteiler` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachgebiet` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.sachverhalt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.bewertung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.moegliche_erklaerung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.unsicherheiten` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachlich_bestaetigt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteilt_am` (owner: intent `beurteilung-vorbereiten`)\n- `rueckfragen.antwort` (owner: intent `antwort-erfassen`)\n- `rueckfragen.antwort_am` (owner: intent `antwort-erfassen`)\n- `rueckfragen.aenderung_angabe` (owner: intent `antwort-erfassen`)\n- `entscheidungen.vorgang` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.anforderung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.beurteilung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.regel` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheider` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.befugnis_geprueft` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.gegenstand` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.unsicherheiten` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.ki_vorschlag` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.begruendung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.folgen` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidungsdatum` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.freigabestatus` (owner: intent `entscheidung-treffen`)\n- `vorgaenge.vorgangsnummer` (owner: tool `vorgangsnummer-vergeben`)\n- `rueckfragen.gestellt_am` (owner: tool `rueckfrage-datum-setzen`)\n- `vorgaenge.geklaerte_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.offene_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.uebergabefaehig` (owner: tool `punkte-zusammenfassen`)\n"
+    },
+    {
+      "slug": "antwort-erfassen",
+      "label": {
+        "de": "Antwort erfassen",
+        "en": "Record answer"
+      },
+      "description": "Eingehende Antwort der Rückfrage zuordnen, Änderungen an Angaben festhalten und Anforderung aktualisieren.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "rueckfragen",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "antwort": "user",
+            "antwort_am": "derived:today",
+            "aenderung_angabe": "user",
+            "status": "fixed:beantwortet"
+          },
+          "needs": {}
+        },
+        {
+          "entity": "anforderungen",
+          "op": "update",
+          "when": "optional",
+          "fields": {
+            "wert": "user",
+            "erfassungsstatus": "user"
+          },
+          "needs": {}
+        },
+        {
+          "entity": "vorgaenge",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "status": "fixed:in_klaerung"
+          },
+          "needs": {}
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `antwort-erfassen` — Antwort erfassen\nEingehende Antwort der Rückfrage zuordnen, Änderungen an Angaben festhalten und Anforderung aktualisieren.\n\n## Your hook — import it, never rebuild what it owns\n`import { useAntwortErfassenFlow } from '@/lib/journey/flows/AntwortErfassen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. This flow CHANGES a record of `rueckfragen`: `{...flow.picks.rueckfragen.select} {...flow.pick('rueckfragen')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. This flow CHANGES a record of `anforderungen`: `{...flow.picks.anforderungen.select} {...flow.pick('anforderungen')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. This flow CHANGES a record of `vorgaenge`: `{...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Offene Rückfrage wählen\n2. Antwort und Änderung an erfassten Angaben eingeben\n3. Anforderung als vollständig markieren, wenn geklärt\n4. Vorgang wieder in Klärung setzen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- updates `rueckfragen`:\n    - `antwort`: the user enters it (bind it through the layer: form.field/…)\n    - `antwort_am`: derived: today() — set it in the plan step, never ask\n    - `aenderung_angabe`: the user enters it (bind it through the layer: form.field/…)\n    - `status`: fixed value `beantwortet` — set it in the plan step's values, never ask\n- updates `anforderungen` (only when the flow needs it):\n    - `wert`: the user enters it (bind it through the layer: form.field/…)\n    - `erfassungsstatus`: the user enters it (bind it through the layer: form.field/…)\n- updates `vorgaenge`:\n    - `status`: fixed value `in_klaerung` — set it in the plan step's values, never ask\n\n## Reads\n- `rueckfragen` columns fragetext, adressat, vorgang, anforderung, gestellt_am\n\n## Success page\n- shows: `rueckfragen.antwort`, `rueckfragen.status`\n- next flows to offer: `entscheidung-treffen`\n\n## Never write these — another flow or a tool owns them\n- `vorgaenge.titel` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kunde` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.eingangsdatum` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kundenanfrage` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.zustaendige_person` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.prozessschritt` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.freigabestatus` (owner: intent `anfrage-aufnehmen`)\n- `quellen.vorgang` (owner: intent `anfrage-aufnehmen`)\n- `quellen.bezeichnung` (owner: intent `anfrage-aufnehmen`)\n- `quellen.quellenart` (owner: intent `anfrage-aufnehmen`)\n- `quellen.fundort` (owner: intent `anfrage-aufnehmen`)\n- `quellen.version` (owner: intent `anfrage-aufnehmen`)\n- `quellen.verlaesslichkeit` (owner: intent `anfrage-aufnehmen`)\n- `anforderungen.vorgang` (owner: intent `anforderung-erfassen`)\n- `anforderungen.bezeichnung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.beschreibung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.kategorie` (owner: intent `anforderung-erfassen`)\n- `anforderungen.quelle` (owner: intent `anforderung-erfassen`)\n- `anforderungen.art_der_angabe` (owner: intent `anforderung-erfassen`)\n- `anforderungen.hinweis_luecke` (owner: intent `anforderung-erfassen`)\n- `anforderungen.widerspruch_zu` (owner: intent `anforderung-erfassen`)\n- `beurteilungen.vorgang` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.anforderung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteiler` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachgebiet` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.sachverhalt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.bewertung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.moegliche_erklaerung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.unsicherheiten` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachlich_bestaetigt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteilt_am` (owner: intent `beurteilung-vorbereiten`)\n- `rueckfragen.vorgang` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.anforderung` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.adressat` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.fragetext` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.buendelungsgruppe` (owner: intent `rueckfrage-stellen`)\n- `entscheidungen.vorgang` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.anforderung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.beurteilung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.regel` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheider` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.befugnis_geprueft` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.gegenstand` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.unsicherheiten` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.ki_vorschlag` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.begruendung` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.folgen` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.entscheidungsdatum` (owner: intent `entscheidung-treffen`)\n- `entscheidungen.freigabestatus` (owner: intent `entscheidung-treffen`)\n- `vorgaenge.vorgangsnummer` (owner: tool `vorgangsnummer-vergeben`)\n- `rueckfragen.gestellt_am` (owner: tool `rueckfrage-datum-setzen`)\n- `vorgaenge.geklaerte_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.offene_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.uebergabefaehig` (owner: tool `punkte-zusammenfassen`)\n"
+    },
+    {
+      "slug": "entscheidung-treffen",
+      "label": {
+        "de": "Entscheidung treffen",
+        "en": "Make decision"
+      },
+      "description": "Entscheidung mit Regel, Beurteilung, Entscheider und Befugnisprüfung festhalten.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "entscheidungen",
+          "op": "create",
+          "when": "always",
+          "fields": {
+            "vorgang": "picked",
+            "anforderung": "picked",
+            "beurteilung": "picked",
+            "regel": "picked",
+            "entscheider": "picked",
+            "befugnis_geprueft": "user",
+            "gegenstand": "user",
+            "unsicherheiten": "user",
+            "ki_vorschlag": "user",
+            "entscheidung": "user",
+            "begruendung": "user",
+            "folgen": "user",
+            "entscheidungsdatum": "derived:today",
+            "freigabestatus": "user"
+          },
+          "needs": {}
+        },
+        {
+          "entity": "vorgaenge",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "prozessschritt": "fixed:entscheidungen_treffen",
+            "status": "fixed:entscheidungsreif"
+          },
+          "needs": {}
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `entscheidung-treffen` — Entscheidung treffen\nEntscheidung mit Regel, Beurteilung, Entscheider und Befugnisprüfung festhalten.\n\n## Your hook — import it, never rebuild what it owns\n`import { useEntscheidungTreffenFlow } from '@/lib/journey/flows/EntscheidungTreffen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: vorgang, anforderung, beurteilung, regel, entscheider), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. This flow CHANGES a record of `vorgaenge`: `{...flow.picks.vorgaenge.select} {...flow.pick('vorgaenge')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Vorgang, Anforderung und Beurteilung wählen\n2. Anwendbare Regel wählen\n3. Entscheidende Person wählen, Befugnis prüfen\n4. Unsicherheiten, Entscheidung, Begründung, Folgen und Freigabestatus erfassen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- creates `entscheidungen`:\n    - `vorgang`: from the record the user picks in this flow\n    - `anforderung`: from the record the user picks in this flow\n    - `beurteilung`: from the record the user picks in this flow\n    - `regel`: from the record the user picks in this flow\n    - `entscheider`: from the record the user picks in this flow\n    - `befugnis_geprueft`: the user enters it (bind it through the layer: form.field/…)\n    - `gegenstand`: the user enters it (bind it through the layer: form.field/…)\n    - `unsicherheiten`: the user enters it (bind it through the layer: form.field/…)\n    - `ki_vorschlag`: the user enters it (bind it through the layer: form.field/…)\n    - `entscheidung`: the user enters it (bind it through the layer: form.field/…)\n    - `begruendung`: the user enters it (bind it through the layer: form.field/…)\n    - `folgen`: the user enters it (bind it through the layer: form.field/…)\n    - `entscheidungsdatum`: derived: today() — set it in the plan step, never ask\n    - `freigabestatus`: the user enters it (bind it through the layer: form.field/…)\n- updates `vorgaenge`:\n    - `prozessschritt`: fixed value `entscheidungen_treffen` — set it in the plan step's values, never ask\n    - `status`: fixed value `entscheidungsreif` — set it in the plan step's values, never ask\n\n## Reads\n- `regelwerk` columns bezeichnung, regeltyp, erforderliche_befugnis, verbindlich\n- `beteiligte` columns vorname, nachname, entscheidungsbefugnis\n- `beurteilungen` columns sachverhalt, fachlich_bestaetigt, unsicherheiten\n\n## Checks BEFORE the write (block the submit with the message when they fail)\n- custom (entscheider=`entscheidungen.entscheider`, regel=`entscheidungen.regel`, befugnis=`beteiligte.entscheidungsbefugnis`, erforderlich=`regelwerk.erforderliche_befugnis`) — message: „Die entscheidende Person hat nicht die Befugnis, die die Regel verlangt.“\n\n## Success page\n- shows: `entscheidungen.gegenstand`, `entscheidungen.freigabestatus`\n\n## Never write these — another flow or a tool owns them\n- `vorgaenge.titel` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kunde` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.eingangsdatum` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.kundenanfrage` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.zustaendige_person` (owner: intent `anfrage-aufnehmen`)\n- `vorgaenge.freigabestatus` (owner: intent `anfrage-aufnehmen`)\n- `quellen.vorgang` (owner: intent `anfrage-aufnehmen`)\n- `quellen.bezeichnung` (owner: intent `anfrage-aufnehmen`)\n- `quellen.quellenart` (owner: intent `anfrage-aufnehmen`)\n- `quellen.fundort` (owner: intent `anfrage-aufnehmen`)\n- `quellen.version` (owner: intent `anfrage-aufnehmen`)\n- `quellen.verlaesslichkeit` (owner: intent `anfrage-aufnehmen`)\n- `anforderungen.vorgang` (owner: intent `anforderung-erfassen`)\n- `anforderungen.bezeichnung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.beschreibung` (owner: intent `anforderung-erfassen`)\n- `anforderungen.kategorie` (owner: intent `anforderung-erfassen`)\n- `anforderungen.wert` (owner: intent `anforderung-erfassen`)\n- `anforderungen.quelle` (owner: intent `anforderung-erfassen`)\n- `anforderungen.art_der_angabe` (owner: intent `anforderung-erfassen`)\n- `anforderungen.erfassungsstatus` (owner: intent `anforderung-erfassen`)\n- `anforderungen.hinweis_luecke` (owner: intent `anforderung-erfassen`)\n- `anforderungen.widerspruch_zu` (owner: intent `anforderung-erfassen`)\n- `beurteilungen.vorgang` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.anforderung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteiler` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachgebiet` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.sachverhalt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.bewertung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.moegliche_erklaerung` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.unsicherheiten` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.fachlich_bestaetigt` (owner: intent `beurteilung-vorbereiten`)\n- `beurteilungen.beurteilt_am` (owner: intent `beurteilung-vorbereiten`)\n- `rueckfragen.vorgang` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.anforderung` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.adressat` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.fragetext` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.buendelungsgruppe` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.status` (owner: intent `rueckfrage-stellen`)\n- `rueckfragen.antwort` (owner: intent `antwort-erfassen`)\n- `rueckfragen.antwort_am` (owner: intent `antwort-erfassen`)\n- `rueckfragen.aenderung_angabe` (owner: intent `antwort-erfassen`)\n- `vorgaenge.vorgangsnummer` (owner: tool `vorgangsnummer-vergeben`)\n- `rueckfragen.gestellt_am` (owner: tool `rueckfrage-datum-setzen`)\n- `vorgaenge.geklaerte_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.offene_punkte` (owner: tool `punkte-zusammenfassen`)\n- `vorgaenge.uebergabefaehig` (owner: tool `punkte-zusammenfassen`)\n"
+    }
+  ],
+  "public_pages": [],
+  "tools": [
+    {
+      "id": "vorgangsnummer-vergeben",
+      "purpose": "Vergibt beim Anlegen eines Vorgangs eine laufende Vorgangsnummer. Der Ablauf Anfrage aufnehmen lässt das Feld aus."
+    },
+    {
+      "id": "freigabestatus-ableiten",
+      "purpose": "Leitet den Freigabestatus des Vorgangs aus seinen Entscheidungen ab: alle freigegeben = freigegeben, einige = teilweise freigegeben, eine abgelehnt = abgelehnt, sonst nicht freigegeben."
+    },
+    {
+      "id": "rueckfrage-datum-setzen",
+      "purpose": "Setzt das Datum Gestellt am, sobald eine Rückfrage auf Status gestellt steht und noch kein Datum hat. Prüft den Status im Code, da jede Änderung auslöst."
+    },
+    {
+      "id": "punkte-zusammenfassen",
+      "purpose": "Fasst bei jeder Änderung einer Anforderung die geklärten und offenen Punkte des Vorgangs zusammen und setzt, ob er übergabefähig ist (keine Anforderung fehlt, widersprüchlich oder ungeprüft)."
+    },
+    {
+      "id": "wartende-rueckfragen-melden",
+      "purpose": "Sendet täglich eine Sammelmail an den Schlüsselinhaber mit allen Rückfragen, die seit über 7 Tagen gestellt und unbeantwortet sind."
+    }
+  ],
+  "covered_by_platform": [
+    {
+      "wish": "Die beteiligten Personen und ihre Zuständigkeiten pflegen",
+      "feature": "record_form"
+    },
+    {
+      "wish": "Vorhandene Systeme und Dokumente pro Vorgang ablegen",
+      "feature": "record_attachments"
+    },
+    {
+      "wish": "Änderungen an bereits erfassten Angaben nachvollziehbar halten",
+      "feature": "record_history"
+    },
+    {
+      "wish": "Offene Punkte, Lücken und Erfahrungen nach Art oder Status auswerten",
+      "feature": "distribution_view"
+    },
+    {
+      "wish": "Zugriff je Fachstelle steuern",
+      "feature": "user_roles"
+    },
+    {
+      "wish": "Erfahrungen und Anforderungen durchsuchen und filtern",
+      "feature": "search_filter"
+    }
+  ],
+  "ownership": {
+    "vorgaenge": {
+      "titel": "intent:anfrage-aufnehmen",
+      "kunde": "intent:anfrage-aufnehmen",
+      "eingangsdatum": "intent:anfrage-aufnehmen",
+      "kundenanfrage": "intent:anfrage-aufnehmen",
+      "zustaendige_person": "intent:anfrage-aufnehmen",
+      "status": "intent:entscheidung-treffen",
+      "prozessschritt": "intent:entscheidung-treffen",
+      "freigabestatus": "tool:freigabestatus-ableiten",
+      "vorgangsnummer": "tool:vorgangsnummer-vergeben",
+      "geklaerte_punkte": "tool:punkte-zusammenfassen",
+      "offene_punkte": "tool:punkte-zusammenfassen",
+      "uebergabefaehig": "tool:punkte-zusammenfassen"
+    },
+    "quellen": {
+      "vorgang": "intent:anfrage-aufnehmen",
+      "bezeichnung": "intent:anfrage-aufnehmen",
+      "quellenart": "intent:anfrage-aufnehmen",
+      "fundort": "intent:anfrage-aufnehmen",
+      "version": "intent:anfrage-aufnehmen",
+      "verlaesslichkeit": "intent:anfrage-aufnehmen"
+    },
+    "anforderungen": {
+      "vorgang": "intent:anforderung-erfassen",
+      "bezeichnung": "intent:anforderung-erfassen",
+      "beschreibung": "intent:anforderung-erfassen",
+      "kategorie": "intent:anforderung-erfassen",
+      "wert": "intent:antwort-erfassen",
+      "quelle": "intent:anforderung-erfassen",
+      "art_der_angabe": "intent:anforderung-erfassen",
+      "erfassungsstatus": "intent:antwort-erfassen",
+      "hinweis_luecke": "intent:anforderung-erfassen",
+      "widerspruch_zu": "intent:anforderung-erfassen"
+    },
+    "beurteilungen": {
+      "vorgang": "intent:beurteilung-vorbereiten",
+      "anforderung": "intent:beurteilung-vorbereiten",
+      "beurteiler": "intent:beurteilung-vorbereiten",
+      "fachgebiet": "intent:beurteilung-vorbereiten",
+      "sachverhalt": "intent:beurteilung-vorbereiten",
+      "bewertung": "intent:beurteilung-vorbereiten",
+      "moegliche_erklaerung": "intent:beurteilung-vorbereiten",
+      "unsicherheiten": "intent:beurteilung-vorbereiten",
+      "fachlich_bestaetigt": "intent:beurteilung-vorbereiten",
+      "beurteilt_am": "intent:beurteilung-vorbereiten"
+    },
+    "rueckfragen": {
+      "vorgang": "intent:rueckfrage-stellen",
+      "anforderung": "intent:rueckfrage-stellen",
+      "adressat": "intent:rueckfrage-stellen",
+      "fragetext": "intent:rueckfrage-stellen",
+      "buendelungsgruppe": "intent:rueckfrage-stellen",
+      "status": "intent:antwort-erfassen",
+      "antwort": "intent:antwort-erfassen",
+      "antwort_am": "intent:antwort-erfassen",
+      "aenderung_angabe": "intent:antwort-erfassen",
+      "gestellt_am": "tool:rueckfrage-datum-setzen"
+    },
+    "entscheidungen": {
+      "vorgang": "intent:entscheidung-treffen",
+      "anforderung": "intent:entscheidung-treffen",
+      "beurteilung": "intent:entscheidung-treffen",
+      "regel": "intent:entscheidung-treffen",
+      "entscheider": "intent:entscheidung-treffen",
+      "befugnis_geprueft": "intent:entscheidung-treffen",
+      "gegenstand": "intent:entscheidung-treffen",
+      "unsicherheiten": "intent:entscheidung-treffen",
+      "ki_vorschlag": "intent:entscheidung-treffen",
+      "entscheidung": "intent:entscheidung-treffen",
+      "begruendung": "intent:entscheidung-treffen",
+      "folgen": "intent:entscheidung-treffen",
+      "entscheidungsdatum": "intent:entscheidung-treffen",
+      "freigabestatus": "intent:entscheidung-treffen"
+    }
+  },
+  "dashboard": {
+    "focus": [
+      "Vorgänge je Status und Prozessschritt",
+      "Vorgänge, die auf Antwort warten",
+      "Entscheidungsreife Vorgänge ohne Freigabe",
+      "Offene Rückfragen",
+      "Anforderungen mit Lücke oder Widerspruch"
+    ],
+    "hints": [
+      "Offene Punkte und Freigabestatus je Vorgang zuerst zeigen",
+      "Ungeprüfte Annahmen deutlich von bestätigten Angaben unterscheiden",
+      "Entscheidungen zeigen Regel, Entscheider und Beurteilung nebeneinander"
+    ],
+    "wishes": []
+  }
+}

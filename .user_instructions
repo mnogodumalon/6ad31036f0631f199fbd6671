@@ -1,0 +1,125 @@
+Erstelle ein Vorgangsmanagement für das „technische Anfrage- und Angebotsmanagement“ in dem der Ablauf organisiert wird und Erfahrungen aufgezeichnet werden können.
+
+Wir benötigen dafür
+
+* den tatsächlichen Arbeitsablauf,
+* die beteiligten Personen und ihre Zuständigkeiten,
+* vorhandene Systeme und Dokumente,
+* informelle Hilfsmittel und bewährte Routinen,
+* häufige Informationslücken und Widersprüche,
+* typische Rückfragen und Abstimmungsschleifen,
+* notwendige fachliche Beurteilungen,
+* Entscheidungen und Freigaben,
+* Fehler, Nacharbeit und Verzögerungen,
+* den heutigen Umgang mit früheren Erfahrungen.
+
+Sechs Fähigkeiten müssen unterstützt werden:
+
+1. Relevante Informationen aus den vorhandenen Quellen zusammenführen und auf ihre Herkunft zurückführen.
+2. Anforderungen strukturiert erfassen und fehlende Angaben oder Widersprüche sichtbar machen.
+3. Fachliche Beurteilungen und notwendige Entscheidungen vorbereiten.
+4. Kommunikation und Beteiligung der zuständigen Personen unterstützen.
+5. Entscheidungen, offene Punkte und Freigabestatus nachvollziehbar halten.
+6. Relevante Erfahrungen aus dem Auftrag so erhalten, dass sie später geprüft und wiederverwendet werden können.
+
+Es muss sich nachverfolgen lassen
+
+* welche Information einer Entscheidung zugrunde liegt,
+* welche fachliche Beurteilung vorliegt,
+* welche Unsicherheiten noch bestehen,
+* wer entscheiden darf,
+* welche Regeln gelten,
+* welche Entscheidung tatsächlich getroffen wurde,
+* welche Folgen daraus entstehen.
+
+Geschäftsregeln und Entscheidungsbefugnisse müssen verbindlich und kontrollierbar sein.
+
+Zum generellen Ablauf:
+
+Der Arbeitsprozess
+
+Der Testcase folgt dem tatsächlichen Weg von der Anfrage zur geklärten Anforderung.
+
+Schritt 1: Anfrage verstehen
+
+Die Kundenanfrage wird aufgenommen. Relevante Dokumente und Angaben werden identifiziert.
+
+Die Anwendung unterstützt dabei, die Informationen in einen gemeinsamen Auftragskontext zu bringen.
+
+Prüffrage: Lassen sich die Kundenanforderungen vollständiger und mit weniger vermeidbarer Sucharbeit erfassen?
+
+Schritt 2: Informationen prüfen
+
+Die vorhandenen Angaben werden mit den für den Auftrag erforderlichen Informationen und Regeln abgeglichen.
+
+Die Anwendung hilft, fehlende Angaben, mögliche Widersprüche und technische Prüfpunkte sichtbar zu machen.
+
+Jede relevante Angabe sollte auf ihre Quelle zurückführbar sein.
+
+Prüffrage: Werden relevante Lücken und Widersprüche zuverlässig erkannt, ohne unsichere Vermutungen als Tatsachen darzustellen?
+
+Schritt 3: Beurteilungen vorbereiten
+
+Die erkannten Sachverhalte werden fachlich bewertet.
+
+Die Anwendung kann Informationen zusammenstellen, mögliche Erklärungen anbieten und Prüfungen vorbereiten. Die fachliche Gültigkeit muss entsprechend den Anforderungen des Anwendungsfalls bestätigt werden.
+
+Prüffrage: Erhalten die zuständigen Personen eine bessere Grundlage für ihre fachlichen Beurteilungen?
+
+Schritt 4: Die richtigen Beteiligten einbeziehen
+
+Offene Fragen werden den zuständigen Personen oder Stellen zugeordnet.
+
+Das können beispielsweise Vertrieb, Konstruktion, Arbeitsvorbereitung, Qualitätssicherung oder der Kunde sein.
+
+Die Anwendung unterstützt dabei, Zuständigkeiten sichtbar zu machen, Rückfragen vorzubereiten und notwendige Abstimmungen nachvollziehbar zu halten.
+
+Prüffrage: Werden Fragen früher an die richtigen Beteiligten gerichtet, und lassen sich unnötige Abstimmungsschleifen vermeiden?
+
+Schritt 5: Kommunikation organisieren
+
+Rückfragen werden aus den offenen Punkten abgeleitet, sinnvoll gebündelt und mit den betroffenen Anforderungen verbunden.
+
+Eingehende Antworten werden den jeweiligen Fragen zugeordnet. Änderungen an bereits erfassten Angaben müssen nachvollziehbar bleiben.
+
+Prüffrage: Wird die Kommunikation vollständiger, zielgerichteter und effizienter, ohne notwendige Prüfungen oder Rückfragen zu unterdrücken?
+
+Schritt 6: Entscheidungen treffen
+
+Auf Grundlage der geklärten Informationen werden die erforderlichen Entscheidungen vorbereitet und getroffen.
+
+Die Anwendung muss erkennen lassen:
+
+* welche Information einer Entscheidung zugrunde liegt,
+* welche fachliche Beurteilung vorliegt,
+* welche Unsicherheiten noch bestehen,
+* wer entscheiden darf,
+* welche Regeln gelten,
+* welche Entscheidung tatsächlich getroffen wurde,
+* welche Folgen daraus entstehen.
+
+Die KI darf Vorschläge liefern. Verbindliche Geschäftsregeln und Entscheidungsbefugnisse müssen kontrollierbar bleiben.
+
+Prüffrage: Werden Entscheidungen nachvollziehbarer und auf einer vollständigeren Grundlage getroffen?
+
+Schritt 7: Auftragsentwurf erstellen und prüfen
+
+Die geklärten Anforderungen, bestätigten Angaben, offenen Punkte und getroffenen Entscheidungen werden zu einem nachvollziehbaren Auftragsentwurf zusammengeführt.
+
+Der Entwurf muss erkennen lassen, was bereits geklärt ist und was noch geprüft oder freigegeben werden muss.
+
+Prüffrage: Kann der Auftrag zuverlässiger an den nächsten Arbeitsschritt übergeben werden, ohne vermeidbare Lücken oder Widersprüche mitzunehmen?
+
+Schritt 8: Ergebnis und Verbesserungsmöglichkeiten erfassen
+
+Nach Abschluss werden relevante Ergebnisse, aufgetretene Probleme und notwendige Korrekturen festgehalten.
+
+Dabei wird unterschieden zwischen:
+
+* einer beobachteten Tatsache,
+* einer noch ungeprüften Annahme,
+* einer fachlich bestätigten Erkenntnis,
+* einer verbindlichen Regel,
+* einer situationsabhängigen Entscheidung.
+
+Prüffrage: Bleiben Erfahrungen erhalten, die bei späteren Aufträgen einen tatsächlichen Nutzen erzeugen könnten?
